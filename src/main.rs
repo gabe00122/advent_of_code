@@ -3,20 +3,51 @@ mod util;
 mod year2021;
 
 use std::env;
-use std::io;
 
-fn main() -> io::Result<()> {
+struct Args {
+    day: u8,
+}
+
+enum ArgsError {
+    NoDay,
+    NonIntDay,
+}
+
+fn main() {
+    let year = 2021; // hard coded
+
+    match parse_args() {
+        Ok(Args { day }) => {
+            if let Ok(input) = challenge_input::get("input", year, day) {
+                let result = year2021::run_challenge(&input, day);
+                println!("{} : {}", result.part1, result.part2);
+            } else { // capture details
+                eprintln!("Challenge input could not be read.");
+            }
+        }
+        Err(ArgsError::NoDay) => {
+            eprintln!("Please pass in a challenge day.")
+        }
+        Err(ArgsError::NonIntDay) => {
+            eprintln!("Please pass in a challenge day as a number.")
+        }
+    }
+}
+
+fn parse_args() -> Result<Args, ArgsError> {
     let mut args = env::args();
-    args.next();
-    let day = args.next();
+    args.next(); // program name
+    let raw_day = args.next();
 
-    let year = 2021;
-    let day = day.unwrap().parse().unwrap(); // temp
-
-    let input = challenge_input::get("input", year, day)?;
-
-    let result = year2021::run_challenge(&input, day);
-    println!("{} : {}", result.part1, result.part2);
-
-    Ok(())
+    if let Some(day) = raw_day {
+        if let Ok(day) = day.parse() {
+            Ok(Args {
+                day,
+            })
+        } else {
+            Err(ArgsError::NonIntDay)
+        }
+    } else {
+        Err(ArgsError::NoDay)
+    }
 }
