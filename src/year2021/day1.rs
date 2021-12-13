@@ -9,7 +9,7 @@ fn part1(input: &[i32]) -> i32 {
     input
         .iter()
         .zip(input[1..].iter())
-        .map(|(a, b)| if a < b { 1 } else { 0 })
+        .map(|(a, b)| (a < b) as i32)
         .sum()
 }
 
@@ -19,6 +19,6 @@ fn part2(input: &[i32]) -> i32 {
         .zip(input[1..].iter())
         .zip(input[2..].iter())
         .zip(input[3..].iter())
-        .map(|(((a, b), c), d)| if a + b + c < b + c + d { 1 } else { 0 })
+        .map(|(((a, b), c), d)| (a + b + c < b + c + d) as i32)
         .sum()
 }
