@@ -1,5 +1,5 @@
 mod challenge_input;
-mod util;
+mod challenge_result;
 mod year2021;
 
 use std::env;
@@ -18,18 +18,27 @@ fn main() {
 
     match parse_args() {
         Ok(Args { day }) => {
-            if let Ok(input) = challenge_input::get("input", year, day) {
-                let result = year2021::run_challenge(&input, day);
-                println!("{} : {}", result.part1, result.part2);
-            } else { // capture details
-                eprintln!("Challenge input could not be read.");
+            match challenge_input::get("input", year, day) {
+                Ok(input) => {
+                    match year2021::run_challenge(&input, day) {
+                        Ok(result) => {
+                            println!("{} : {}", result.part1, result.part2);
+                        }
+                        Err(e) => {
+                            eprintln!("Challenge Error: {}", e);
+                        }
+                    }
+                }
+                Err(e) => {
+                    eprintln!("Challenge input could not be read.\nReason: {}", e);
+                }
             }
         }
         Err(ArgsError::NoDay) => {
-            eprintln!("Please pass in a challenge day.")
+            eprintln!("Please pass in a challenge day.");
         }
         Err(ArgsError::NonIntDay) => {
-            eprintln!("Please pass in a challenge day as a number.")
+            eprintln!("Please pass in a challenge day as a number.");
         }
     }
 }
@@ -37,9 +46,8 @@ fn main() {
 fn parse_args() -> Result<Args, ArgsError> {
     let mut args = env::args();
     args.next(); // program name
-    let raw_day = args.next();
 
-    if let Some(day) = raw_day {
+    if let Some(day) = args.next() {
         if let Ok(day) = day.parse() {
             Ok(Args {
                 day,
