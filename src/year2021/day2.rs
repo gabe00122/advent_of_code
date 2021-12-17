@@ -1,8 +1,8 @@
 use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
-use std::str::FromStr;
 use std::error;
 use std::fmt;
 use std::fmt::Formatter;
+use std::str::FromStr;
 
 #[derive(Debug, Copy, Clone)]
 struct DirectionParseError;

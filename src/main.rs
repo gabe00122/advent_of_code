@@ -17,23 +17,19 @@ fn main() {
     let year = 2021; // hard coded
 
     match parse_args() {
-        Ok(Args { day }) => {
-            match challenge_input::get("input", year, day) {
-                Ok(input) => {
-                    match year2021::run_challenge(&input, day) {
-                        Ok(result) => {
-                            println!("{} : {}", result.part1, result.part2);
-                        }
-                        Err(e) => {
-                            eprintln!("Challenge Error: {}", e);
-                        }
-                    }
+        Ok(Args { day }) => match challenge_input::get("input", year, day) {
+            Ok(input) => match year2021::run_challenge(&input, day) {
+                Ok(result) => {
+                    println!("{} : {}", result.part1, result.part2);
                 }
                 Err(e) => {
-                    eprintln!("Challenge input could not be read.\nReason: {}", e);
+                    eprintln!("Challenge Error: {}", e);
                 }
+            },
+            Err(e) => {
+                eprintln!("Challenge input could not be read.\nReason: {}", e);
             }
-        }
+        },
         Err(ArgsError::NoDay) => {
             eprintln!("Please pass in a challenge day.");
         }
@@ -49,9 +45,7 @@ fn parse_args() -> Result<Args, ArgsError> {
 
     if let Some(day) = args.next() {
         if let Ok(day) = day.parse() {
-            Ok(Args {
-                day,
-            })
+            Ok(Args { day })
         } else {
             Err(ArgsError::NonIntDay)
         }
