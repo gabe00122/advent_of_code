@@ -107,10 +107,7 @@ fn part1(numbers: &[u8], boards: &[Board]) -> i32 {
 }
 
 fn part2(numbers: &[u8], boards: &[Board]) -> i32 {
-    let mut check_state = Vec::with_capacity(boards.len());
-    for _ in 0..check_state.capacity() {
-        check_state.push(BoardChecks::new());
-    }
+    let mut check_state = vec![BoardChecks::new(); boards.len()];
 
     let mut winning_index: usize = 0;
     let mut winning_number: i32 = 0;
