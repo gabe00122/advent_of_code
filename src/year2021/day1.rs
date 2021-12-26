@@ -19,6 +19,6 @@ fn part2(input: &[i32]) -> i32 {
         .zip(input[1..].iter())
         .zip(input[2..].iter())
         .zip(input[3..].iter())
-        .map(|(((a, b), c), d)| (a + b + c < b + c + d) as i32)
+        .map(|(((a, _), _), d)| (a < d) as i32)
         .sum()
 }

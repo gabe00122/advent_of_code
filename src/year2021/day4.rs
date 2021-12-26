@@ -66,7 +66,7 @@ pub fn run(input: &str) -> ChallengeResult {
     let lines: Vec<&str> = input.lines().collect();
 
     let numbers: Vec<u8> = lines[0]
-        .split(",")
+        .split(',')
         .map(str::parse)
         .collect::<Result<Vec<_>, _>>()?;
 
@@ -145,7 +145,7 @@ fn parse_bingo(lines: &[&str]) -> Result<Board, ParseIntError> {
     Ok(board)
 }
 
-// fn create_lookup_table(boards: &[Board]) -> Vec<Vec<&Board>> {
+// fn create_lookup_table(boards: &[Board]) -> Vec<Vec<usize>> {
 //     let mut lookup_table: Vec<Vec<usize>> = Vec::with_capacity(100);
 //     for _ in 0..lookup_table.capacity() {
 //         lookup_table.push(Vec::new());
@@ -155,7 +155,7 @@ fn parse_bingo(lines: &[&str]) -> Result<Board, ParseIntError> {
 //         for row in board.data {
 //             for cell in row {
 //                 let p = &mut lookup_table[cell as usize];
-//                 if !p.binary_search(&i).is_ok() {
+//                 if !p.last().eq(&i) {
 //                     p.push(i);
 //                 }
 //             }
@@ -163,9 +163,6 @@ fn parse_bingo(lines: &[&str]) -> Result<Board, ParseIntError> {
 //     }
 //
 //     lookup_table
-//         .iter()
-//         .map(|x| x.iter().map(|&v| &boards[v]).collect())
-//         .collect()
 // }
 
 // fn print_board(board: &Board) {
