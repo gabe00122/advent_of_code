@@ -38,7 +38,7 @@ impl FromStr for Direction {
 #[derive(Debug, Copy, Clone)]
 struct MoveInstruction {
     direction: Direction,
-    length: i32,
+    length: u64,
 }
 
 pub fn run(input: &str) -> ChallengeResult {
@@ -46,7 +46,7 @@ pub fn run(input: &str) -> ChallengeResult {
         .lines()
         .map(|line| {
             let direction = Direction::from_str(&line[..line.len() - 2])?;
-            let length: i32 = line[line.len() - 1..].parse()?;
+            let length: u64 = line[line.len() - 1..].parse()?;
 
             Ok(MoveInstruction { direction, length })
         })
@@ -57,9 +57,9 @@ pub fn run(input: &str) -> ChallengeResult {
     Ok(ChallengeSuccess::new(part1(&input), part2(&input)))
 }
 
-fn part1(input: &[MoveInstruction]) -> i32 {
-    let mut horizontal: i32 = 0;
-    let mut depth: i32 = 0;
+fn part1(input: &[MoveInstruction]) -> u64 {
+    let mut horizontal: u64 = 0;
+    let mut depth: u64 = 0;
 
     for MoveInstruction { direction, length } in input {
         match direction {
@@ -72,10 +72,10 @@ fn part1(input: &[MoveInstruction]) -> i32 {
     horizontal * depth
 }
 
-fn part2(input: &[MoveInstruction]) -> i32 {
-    let mut horizontal: i32 = 0;
-    let mut depth: i32 = 0;
-    let mut aim: i32 = 0;
+fn part2(input: &[MoveInstruction]) -> u64 {
+    let mut horizontal: u64 = 0;
+    let mut depth: u64 = 0;
+    let mut aim: u64 = 0;
 
     for MoveInstruction { direction, length } in input {
         match direction {

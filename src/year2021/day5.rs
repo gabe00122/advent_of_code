@@ -98,7 +98,7 @@ pub fn run(input: &str) -> ChallengeResult {
     Ok(ChallengeSuccess::new(part1(&input), part2(&input)))
 }
 
-fn part1(input: &[Line]) -> i32 {
+fn part1(input: &[Line]) -> u64 {
     let mut board = Board::new(1000, 1000);
     for line in input {
         if line.not_diagonal() {
@@ -106,14 +106,14 @@ fn part1(input: &[Line]) -> i32 {
         }
     }
 
-    board.count_doubles() as i32
+    board.count_doubles() as u64
 }
 
-fn part2(input: &[Line]) -> i32 {
+fn part2(input: &[Line]) -> u64 {
     let mut board = Board::new(1000, 1000);
     for line in input {
         board.draw(line);
     }
 
-    board.count_doubles() as i32
+    board.count_doubles() as u64
 }
