@@ -4,8 +4,8 @@ pub fn run(input: &str) -> ChallengeResult {
     let first_line = input.lines().next().unwrap();
 
     let mut fish = [0u64; 9];
-    for d in first_line.split(',').map(|num| num.parse().unwrap()) {
-        fish[d] += 1;
+    for fish_age in first_line.split(',').map(|num| num.parse::<usize>().unwrap()) {
+        fish[fish_age] += 1;
     }
 
     Ok(ChallengeSuccess::new(part1(&fish), part2(&fish)))
