@@ -34,7 +34,7 @@ fn part2(fish: &[u64; 9]) -> u64 {
 fn run_simulation(fish: &mut [u64; 9]) {
     let new_fish = fish[0];
 
-    for i in 0..8 {
+    for i in 0..fish.len() - 1 {
         fish[i] = fish[i + 1];
     }
 

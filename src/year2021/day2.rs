@@ -58,14 +58,16 @@ pub fn run(input: &str) -> ChallengeResult {
 }
 
 fn part1(input: &[MoveInstruction]) -> u64 {
+    use Direction::*;
+
     let mut horizontal: u64 = 0;
     let mut depth: u64 = 0;
 
     for MoveInstruction { direction, length } in input {
         match direction {
-            Direction::Up => depth -= length,
-            Direction::Down => depth += length,
-            Direction::Forward => horizontal += length,
+            Up => depth -= length,
+            Down => depth += length,
+            Forward => horizontal += length,
         }
     }
 
@@ -73,15 +75,17 @@ fn part1(input: &[MoveInstruction]) -> u64 {
 }
 
 fn part2(input: &[MoveInstruction]) -> u64 {
+    use Direction::*;
+
     let mut horizontal: u64 = 0;
     let mut depth: u64 = 0;
     let mut aim: u64 = 0;
 
     for MoveInstruction { direction, length } in input {
         match direction {
-            Direction::Up => aim -= length,
-            Direction::Down => aim += length,
-            Direction::Forward => {
+            Up => aim -= length,
+            Down => aim += length,
+            Forward => {
                 horizontal += length;
                 depth += aim * length;
             }

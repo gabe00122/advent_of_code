@@ -1,26 +1,28 @@
 use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
 use std::num::ParseIntError;
 
+const BOARD_SIZE: usize = 5;
+
 #[derive(Debug)]
 struct Board {
-    data: [[u8; 5]; 5],
+    data: [[u8; BOARD_SIZE]; BOARD_SIZE],
 }
 
 impl Board {
     fn new() -> Self {
-        Board { data: [[0; 5]; 5] }
+        Board { data: [[0; BOARD_SIZE]; BOARD_SIZE] }
     }
 }
 
 #[derive(Debug, Clone)]
 struct BoardChecks {
-    data: [[bool; 5]; 5],
+    data: [[bool; BOARD_SIZE]; BOARD_SIZE],
 }
 
 impl BoardChecks {
     fn new() -> Self {
         BoardChecks {
-            data: [[false; 5]; 5],
+            data: [[false; BOARD_SIZE]; BOARD_SIZE],
         }
     }
 
@@ -41,9 +43,9 @@ impl BoardChecks {
 
     fn is_win(&self) -> bool {
         self.data.iter().any(|row| row.iter().all(|&cell| cell))
-            || (0..5).any(|i| self.data.iter().all(|row| row[i]))
-            || (0..5).all(|i| self.data[i][i])
-            || (0..5).all(|i| self.data[4 - i][i])
+            || (0..BOARD_SIZE).any(|i| self.data.iter().all(|row| row[i]))
+            || (0..BOARD_SIZE).all(|i| self.data[i][i])
+            || (0..BOARD_SIZE).all(|i| self.data[BOARD_SIZE - i - 1][i])
     }
 
     fn sum_unmarked(&self, board: &Board) -> u64 {
