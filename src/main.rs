@@ -1,6 +1,7 @@
 mod challenge_input;
 mod challenge_result;
 mod year2021;
+mod year2022;
 
 use std::env;
 
@@ -14,11 +15,11 @@ enum ArgsError {
 }
 
 fn main() {
-    let year = 2021; // hard coded
+    let year = 2022; // hard coded
 
     match parse_args() {
         Ok(Args { day }) => match challenge_input::get("input", year, day) {
-            Ok(input) => match year2021::run_challenge(&input, day) {
+            Ok(input) => match year2022::run_challenge(&input, day) {
                 Ok(result) => {
                     println!("{} : {}", result.part1, result.part2);
                 }
