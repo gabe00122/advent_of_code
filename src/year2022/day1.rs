@@ -9,14 +9,15 @@ pub fn run(input: &str) -> ChallengeResult {
         if let Ok(line_value) = line.parse::<u64>() {
             local_sum += line_value;
         } else {
-            for i in 0 .. largest_sums.len() {
-                if local_sum > largest_sums[i] {
-                    for j in (i + 1 .. largest_sums.len()).rev() {
-                        largest_sums[j] = largest_sums[j - 1];
-                    }
-                    largest_sums[i] = local_sum;
-                    break;
-                }
+            if local_sum > largest_sums[0] {
+                largest_sums[2] = largest_sums[1];
+                largest_sums[1] = largest_sums[0];
+                largest_sums[0] = local_sum;
+            } else if local_sum > largest_sums[1] {
+                largest_sums[2] = largest_sums[1];
+                largest_sums[1] = local_sum;
+            } else if local_sum > largest_sums[2] {
+                largest_sums[2] = local_sum;
             }
 
             local_sum = 0;
