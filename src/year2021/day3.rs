@@ -12,7 +12,7 @@ fn count_bits(input: &[u16], position: u16) -> u16 {
     input.iter().map(|x| (x >> position) & 1).sum()
 }
 
-fn part1(input: &[u16]) -> i32 {
+fn part1(input: &[u16]) -> u64 {
     let length = input.len() as u16;
 
     let mut gamma = 0;
@@ -28,9 +28,9 @@ fn part1(input: &[u16]) -> i32 {
     gamma * epsilon
 }
 
-fn part2(input: &[u16]) -> i32 {
-    let ogr = life_support(input, true) as i32;
-    let co2 = life_support(input, false) as i32;
+fn part2(input: &[u16]) -> u64 {
+    let ogr = life_support(input, true) as u64;
+    let co2 = life_support(input, false) as u64;
 
     ogr * co2
 }

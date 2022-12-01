@@ -1,26 +1,28 @@
 use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
 use std::num::ParseIntError;
 
+const BOARD_SIZE: usize = 5;
+
 #[derive(Debug)]
 struct Board {
-    data: [[u8; 5]; 5],
+    data: [[u8; BOARD_SIZE]; BOARD_SIZE],
 }
 
 impl Board {
     fn new() -> Self {
-        Board { data: [[0; 5]; 5] }
+        Board { data: [[0; BOARD_SIZE]; BOARD_SIZE] }
     }
 }
 
 #[derive(Debug, Clone)]
 struct BoardChecks {
-    data: [[bool; 5]; 5],
+    data: [[bool; BOARD_SIZE]; BOARD_SIZE],
 }
 
 impl BoardChecks {
     fn new() -> Self {
         BoardChecks {
-            data: [[false; 5]; 5],
+            data: [[false; BOARD_SIZE]; BOARD_SIZE],
         }
     }
 
@@ -41,12 +43,12 @@ impl BoardChecks {
 
     fn is_win(&self) -> bool {
         self.data.iter().any(|row| row.iter().all(|&cell| cell))
-            || (0..5).any(|i| self.data.iter().all(|row| row[i]))
-            || (0..5).all(|i| self.data[i][i])
-            || (0..5).all(|i| self.data[4 - i][i])
+            || (0..BOARD_SIZE).any(|i| self.data.iter().all(|row| row[i]))
+            || (0..BOARD_SIZE).all(|i| self.data[i][i])
+            || (0..BOARD_SIZE).all(|i| self.data[BOARD_SIZE - i - 1][i])
     }
 
-    fn sum_unmarked(&self, board: &Board) -> i32 {
+    fn sum_unmarked(&self, board: &Board) -> u64 {
         self.data
             .iter()
             .zip(board.data.iter())
@@ -55,10 +57,10 @@ impl BoardChecks {
                     .iter()
                     .zip(num_row.iter())
                     .filter(|(&check, _)| !check)
-                    .map(|(_, &num)| num as i32)
-                    .sum::<i32>()
+                    .map(|(_, &num)| num as u64)
+                    .sum::<u64>()
             })
-            .sum::<i32>()
+            .sum::<u64>()
     }
 }
 
@@ -81,20 +83,20 @@ pub fn run(input: &str) -> ChallengeResult {
     ))
 }
 
-fn part1(numbers: &[u8], boards: &[Board]) -> i32 {
+fn part1(numbers: &[u8], boards: &[Board]) -> u64 {
     let mut check_state = Vec::with_capacity(boards.len());
     for _ in 0..check_state.capacity() {
         check_state.push(BoardChecks::new());
     }
 
     let mut winning_index: usize = 0;
-    let mut winning_number: i32 = 0;
+    let mut winning_number: u64 = 0;
 
     'top: for &num in numbers {
         for (index, (checks, board)) in check_state.iter_mut().zip(boards.iter()).enumerate() {
             if checks.call_number(board, num) && checks.is_win() {
                 winning_index = index;
-                winning_number = num as i32;
+                winning_number = num as u64;
                 break 'top;
             }
         }
@@ -106,21 +108,18 @@ fn part1(numbers: &[u8], boards: &[Board]) -> i32 {
     winning_check.sum_unmarked(winning_board) * winning_number
 }
 
-fn part2(numbers: &[u8], boards: &[Board]) -> i32 {
-    let mut check_state = Vec::with_capacity(boards.len());
-    for _ in 0..check_state.capacity() {
-        check_state.push(BoardChecks::new());
-    }
+fn part2(numbers: &[u8], boards: &[Board]) -> u64 {
+    let mut check_state = vec![BoardChecks::new(); boards.len()];
 
     let mut winning_index: usize = 0;
-    let mut winning_number: i32 = 0;
+    let mut winning_number: u64 = 0;
     let mut winning_check = BoardChecks::new();
 
     for &num in numbers {
         for (index, (checks, board)) in check_state.iter_mut().zip(boards.iter()).enumerate() {
             if !checks.is_win() && checks.call_number(board, num) && checks.is_win() {
                 winning_index = index;
-                winning_number = num as i32;
+                winning_number = num as u64;
                 winning_check = checks.clone()
             }
         }
