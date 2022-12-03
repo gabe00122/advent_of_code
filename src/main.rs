@@ -4,22 +4,24 @@ mod year2021;
 mod year2022;
 
 use std::env;
+use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
 
 struct Args {
+    year: u16,
     day: u8,
 }
 
 enum ArgsError {
+    NoYear,
+    NoIntYear,
     NoDay,
     NonIntDay,
 }
 
 fn main() {
-    let year = 2022; // hard coded
-
     match parse_args() {
-        Ok(Args { day }) => match challenge_input::get("input", year, day) {
-            Ok(input) => match year2022::run_challenge(&input, day) {
+        Ok(Args { year, day }) => match challenge_input::get("input", year, day) {
+            Ok(input) => match run_challenge(&input, year, day) {
                 Ok(result) => {
                     println!("{} : {}", result.part1, result.part2);
                 }
@@ -31,6 +33,12 @@ fn main() {
                 eprintln!("Challenge input could not be read.\nReason: {}", e);
             }
         },
+        Err(ArgsError::NoYear) => {
+            eprintln!("Please pass in a challenge year.");
+        }
+        Err(ArgsError::NoIntYear) => {
+            eprintln!("Please pass in a challenge year as a number.");
+        }
         Err(ArgsError::NoDay) => {
             eprintln!("Please pass in a challenge day.");
         }
@@ -40,17 +48,39 @@ fn main() {
     }
 }
 
+fn run_challenge(input: &str, year: u16, day: u8) -> ChallengeResult {
+    match year {
+        2021 => {
+            year2021::run_challenge(input, day)
+        }
+        2022 => {
+            year2022::run_challenge(input, day)
+        }
+        _ => {
+            Ok(ChallengeSuccess::new(0, 0))
+        }
+    }
+}
+
 fn parse_args() -> Result<Args, ArgsError> {
     let mut args = env::args();
     args.next(); // program name
 
-    if let Some(day) = args.next() {
-        if let Ok(day) = day.parse() {
-            Ok(Args { day })
+    if let Some(year) = args.next() {
+        if let Ok(year) = year.parse() {
+            if let Some(day) = args.next() {
+                if let Ok(day) = day.parse() {
+                    Ok(Args { year, day })
+                } else {
+                    Err(ArgsError::NonIntDay)
+                }
+            } else {
+                Err(ArgsError::NoDay)
+            }
         } else {
-            Err(ArgsError::NonIntDay)
+            Err(ArgsError::NoIntYear)
         }
     } else {
-        Err(ArgsError::NoDay)
+        Err(ArgsError::NoYear)
     }
 }
