@@ -50,15 +50,9 @@ fn main() {
 
 fn run_challenge(input: &str, year: u16, day: u8) -> ChallengeResult {
     match year {
-        2021 => {
-            year2021::run_challenge(input, day)
-        }
-        2022 => {
-            year2022::run_challenge(input, day)
-        }
-        _ => {
-            Ok(ChallengeSuccess::new(0, 0))
-        }
+        2021 => year2021::run_challenge(input, day),
+        2022 => year2022::run_challenge(input, day),
+        _ => Ok(ChallengeSuccess::new(0, 0)),
     }
 }
 

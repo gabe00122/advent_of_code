@@ -2,7 +2,6 @@ use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
 
 pub fn run(input: &str) -> ChallengeResult {
     let mut largest_sums: [u64; 3] = [0, 0, 0];
-
     let mut local_sum: u64 = 0;
 
     for line in input.lines() {
