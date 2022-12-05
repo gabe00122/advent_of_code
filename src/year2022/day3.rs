@@ -3,25 +3,20 @@ use std::collections::BTreeSet;
 use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
 
 pub fn run(input: &str) -> ChallengeResult {
-    let part1 = input.lines().map(|line| {
+    let lines: Vec<&str> = input.lines().collect();
+
+    let part1 = lines.iter().map(|line| {
         let half_length = line.len() / 2;
         let first = &line[..half_length];
         let second = &line[half_length..];
 
-        if let Some(letter) = intersection_two_ways(first, second) {
-            letter_to_int(letter)
-        } else {
-            0
-        }
+        let letter = intersection_two_ways(first, second).unwrap();
+        letter_to_int(letter)
     }).sum();
 
-    let lines: Vec<&str> = input.lines().collect();
     let part2 = lines.chunks(3).map(|chunk| {
-        if let Some(letter) = intersection_three_ways(chunk[0], chunk[1], chunk[2]) {
-            letter_to_int(letter)
-        } else {
-            0
-        }
+        let letter = intersection_three_ways(chunk[0], chunk[1], chunk[2]).unwrap();
+        letter_to_int(letter)
     }).sum();
 
     Ok(ChallengeSuccess::new(part1, part2))
