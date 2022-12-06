@@ -1,5 +1,6 @@
 use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
 
+#[derive(Clone, Debug)]
 struct Move {
     from: usize,
     to: usize,
@@ -9,21 +10,43 @@ struct Move {
 pub fn run(input: &str) -> ChallengeResult {
     let lines: Vec<&str> = input.lines().collect();
 
-    let mut stacks = parse_stacks(&lines[..8]);
+    let stacks = parse_stacks(&lines[..8]);
     let moves = parse_moves(&lines[10..]);
 
-    for m in moves.iter() {
-        let new_size = stacks[m.from].len().saturating_sub(m.amount);
-        let transfer: Vec<_> = stacks[m.from].drain(new_size..).collect();
-        stacks[m.to].extend(&transfer);
-    }
-
-    for s in stacks {
-        print!("{}", s.last().unwrap());
-    }
-    println!();
+    println!("Part1: {}", part1(&stacks, &moves));
+    println!("Part2: {}", part2(&stacks, &moves));
 
     Ok(ChallengeSuccess::new(0, 0))
+}
+
+fn part1(stacks: &Vec<Vec<char>>, moves: &Vec<Move>) -> String {
+    let mut stacks = stacks.clone();
+
+    let mut transfer = Vec::new();
+    for current_move in moves.iter() {
+        let from = &mut stacks[current_move.from];
+        let new_size = from.len().saturating_sub(current_move.amount);
+        transfer.extend(from.drain(new_size..).rev());
+
+        stacks[current_move.to].append(&mut transfer);
+    }
+
+    stacks.iter().flat_map(| stack | stack.last()).collect()
+}
+
+fn part2(stacks: &Vec<Vec<char>>, moves: &Vec<Move>) -> String {
+    let mut stacks = stacks.clone();
+
+    let mut transfer = Vec::new();
+    for current_move in moves.iter() {
+        let from = &mut stacks[current_move.from];
+        let new_size = from.len().saturating_sub(current_move.amount);
+        transfer.extend(from.drain(new_size..));
+
+        stacks[current_move.to].append(&mut transfer);
+    }
+
+    stacks.iter().flat_map(| stack | stack.last()).collect()
 }
 
 fn parse_stacks(input: &[&str]) -> Vec<Vec<char>> {
