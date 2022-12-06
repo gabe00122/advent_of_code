@@ -1,13 +1,14 @@
-use std::collections::BTreeMap;
+use std::collections::HashMap;
+use std::hash::Hash;
 use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
 
-struct Counter<T : Ord> {
-    map: BTreeMap<T, u32>
+struct Counter<T : Eq + Hash> {
+    map: HashMap<T, u32>
 }
 
-impl <T : Ord> Counter<T> {
+impl <T : Eq + Hash> Counter<T> {
     fn new() -> Counter<T> {
-        Counter { map: BTreeMap::new() }
+        Counter { map: HashMap::new() }
     }
 
     fn insert(&mut self, value: T) {
