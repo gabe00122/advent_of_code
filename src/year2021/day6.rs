@@ -1,4 +1,4 @@
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 
 pub fn run(input: &str) -> ChallengeResult {
     let first_line = input.lines().next().unwrap();
@@ -8,7 +8,7 @@ pub fn run(input: &str) -> ChallengeResult {
         fish[fish_age] += 1;
     }
 
-    Ok(ChallengeSuccess::new(part1(&fish), part2(&fish)))
+    Ok(Solution::from(part1(&fish), part2(&fish)))
 }
 
 fn part1(fish: &[u64; 9]) -> u64 {

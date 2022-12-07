@@ -1,6 +1,26 @@
 use std::collections::HashMap;
+use std::{error, fmt};
 use std::hash::Hash;
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
+
+#[derive(Debug, Copy, Clone)]
+struct NoSequenceError {
+    window_size: usize
+}
+
+impl NoSequenceError {
+    fn new(window_size: usize) -> NoSequenceError {
+        NoSequenceError { window_size }
+    }
+}
+
+impl fmt::Display for NoSequenceError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "No sequence found without repeating letters size: {}", self.window_size)
+    }
+}
+
+impl error::Error for NoSequenceError {}
 
 struct Counter<T : Eq + Hash> {
     map: HashMap<T, u32>
@@ -36,13 +56,13 @@ impl <T : Eq + Hash> Counter<T> {
 pub fn run(input: &str) -> ChallengeResult {
     let chars: Vec<char> = input.chars().collect();
 
-    let part1 = find_sequence(&chars[..], 4);
-    let part2 = find_sequence(&chars[..], 14);
+    let part1 = find_sequence(&chars[..], 4)?;
+    let part2 = find_sequence(&chars[..], 14)?;
 
-    Ok(ChallengeSuccess::new(part1.unwrap() as u64, part2.unwrap() as u64))
+    Ok(Solution::from(part1, part2))
 }
 
-fn find_sequence(chars: &[char], window_size: usize) -> Option<usize> {
+fn find_sequence(chars: &[char], window_size: usize) -> Result<usize, NoSequenceError> {
     let mut counter = Counter::new();
     for &c in chars.iter().take(window_size) {
         counter.insert(c);
@@ -50,11 +70,11 @@ fn find_sequence(chars: &[char], window_size: usize) -> Option<usize> {
 
     for (i, (&tail, &head)) in chars.iter().zip(&chars[window_size..]).enumerate() {
         if counter.unique_len() >= window_size {
-            return Some(i + window_size);
+            return Ok(i + window_size);
         }
         counter.insert(head);
         counter.remove(tail);
     }
 
-    None
+    Err(NoSequenceError::new(window_size))
 }

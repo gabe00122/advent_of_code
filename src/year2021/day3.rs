@@ -1,11 +1,11 @@
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 
 pub fn run(input: &str) -> ChallengeResult {
     let input = input
         .lines()
         .map(|line| u16::from_str_radix(line, 2).unwrap())
         .collect::<Vec<_>>();
-    Ok(ChallengeSuccess::new(part1(&input), part2(&input)))
+    Ok(Solution::from(part1(&input), part2(&input)))
 }
 
 fn count_bits(input: &[u16], position: u16) -> u16 {

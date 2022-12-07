@@ -1,4 +1,4 @@
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 
 pub fn run(input: &str) -> ChallengeResult {
     let mut largest_sums: [u64; 3] = [0, 0, 0];
@@ -23,5 +23,5 @@ pub fn run(input: &str) -> ChallengeResult {
         }
     }
 
-    Ok(ChallengeSuccess::new(largest_sums[0], largest_sums.iter().sum()))
+    Ok(Solution::from(largest_sums[0], largest_sums.iter().sum()))
 }

@@ -1,4 +1,4 @@
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 use std::error;
 use std::fmt;
 use std::fmt::Formatter;
@@ -54,7 +54,7 @@ pub fn run(input: &str) -> ChallengeResult {
 
     let input = input?;
 
-    Ok(ChallengeSuccess::new(part1(&input), part2(&input)))
+    Ok(Solution::from(part1(&input), part2(&input)))
 }
 
 fn part1(input: &[MoveInstruction]) -> u64 {

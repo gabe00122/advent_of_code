@@ -1,8 +1,8 @@
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 
 pub fn run(input: &str) -> ChallengeResult {
     let input: Vec<u64> = input.lines().map(str::parse).flatten().collect();
-    Ok(ChallengeSuccess::new(part1(&input), part2(&input)))
+    Ok(Solution::from(part1(&input), part2(&input)))
 }
 
 fn part1(input: &[u64]) -> u64 {

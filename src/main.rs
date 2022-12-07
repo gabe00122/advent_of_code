@@ -4,7 +4,7 @@ mod year2021;
 mod year2022;
 
 use std::env;
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::ChallengeResult;
 
 struct Args {
     year: u16,
@@ -52,7 +52,7 @@ fn run_challenge(input: &str, year: u16, day: u8) -> ChallengeResult {
     match year {
         2021 => year2021::run_challenge(input, day),
         2022 => year2022::run_challenge(input, day),
-        _ => Ok(ChallengeSuccess::new(0, 0)),
+        _ => panic!("Not a valid year"),
     }
 }
 

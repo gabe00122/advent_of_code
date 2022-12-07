@@ -1,7 +1,7 @@
 use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::error::Error;
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 
 #[derive(Debug, Copy, Clone)]
 struct MoveParseError;
@@ -85,7 +85,7 @@ fn reverse_game(other: Move, outcome: GameOutcome) -> Move {
 }
 
 pub fn run(input: &str) -> ChallengeResult {
-    Ok(ChallengeSuccess::new(part1(input)?, part2(input)?))
+    Ok(Solution::from(part1(input)?, part2(input)?))
 }
 
 fn part1(input: &str) -> Result<u64, MoveParseError> {

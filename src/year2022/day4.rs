@@ -1,4 +1,4 @@
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 
 #[derive(Copy, Clone)]
 struct Range {
@@ -39,5 +39,5 @@ pub fn run(input: &str) -> ChallengeResult {
         first.overlaps(*second)
     }).count();
 
-    Ok(ChallengeSuccess::new(part1 as u64, part2 as u64))
+    Ok(Solution::from(part1 as u64, part2 as u64))
 }

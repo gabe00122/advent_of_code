@@ -1,4 +1,4 @@
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 use std::num::ParseIntError;
 
 const BOARD_SIZE: usize = 5;
@@ -77,7 +77,7 @@ pub fn run(input: &str) -> ChallengeResult {
         .map(|window| parse_bingo(&window[1..]))
         .collect::<Result<Vec<Board>, ParseIntError>>()?;
 
-    Ok(ChallengeSuccess::new(
+    Ok(Solution::from(
         part1(&numbers, &boards),
         part2(&numbers, &boards),
     ))

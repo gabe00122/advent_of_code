@@ -4,8 +4,9 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::ChallengeResult;
 
 pub fn run_challenge(input: &str, day: u8) -> ChallengeResult {
     match day {
@@ -15,6 +16,7 @@ pub fn run_challenge(input: &str, day: u8) -> ChallengeResult {
         4 => day4::run(input),
         5 => day5::run(input),
         6 => day6::run(input),
-        _ => Ok(ChallengeSuccess::new(0, 0)),
+        7 => day7::run(input),
+        _ => panic!("Not a valid day."),
     }
 }

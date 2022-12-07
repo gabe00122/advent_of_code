@@ -1,4 +1,4 @@
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 
 #[derive(Debug, Copy, Clone)]
 struct Point {
@@ -95,7 +95,7 @@ pub fn run(input: &str) -> ChallengeResult {
         .map(Line::from_str)
         .collect();
 
-    Ok(ChallengeSuccess::new(part1(&input), part2(&input)))
+    Ok(Solution::from(part1(&input), part2(&input)))
 }
 
 fn part1(input: &[Line]) -> u64 {

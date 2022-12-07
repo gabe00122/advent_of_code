@@ -1,4 +1,4 @@
-use crate::challenge_result::{ChallengeResult, ChallengeSuccess};
+use crate::challenge_result::{ChallengeResult, Solution};
 
 #[derive(Clone, Debug)]
 struct Move {
@@ -13,10 +13,8 @@ pub fn run(input: &str) -> ChallengeResult {
     let stacks = parse_stacks(&lines[..8]);
     let moves = parse_moves(&lines[10..]);
 
-    println!("Part1: {}", part1(&stacks, &moves));
-    println!("Part2: {}", part2(&stacks, &moves));
 
-    Ok(ChallengeSuccess::new(0, 0))
+    Ok(Solution::new(part1(&stacks, &moves), part2(&stacks, &moves)))
 }
 
 fn part1(stacks: &Vec<Vec<char>>, moves: &Vec<Move>) -> String {
