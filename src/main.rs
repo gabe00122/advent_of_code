@@ -4,6 +4,8 @@ mod year2021;
 mod year2022;
 
 use std::env;
+use std::fmt;
+use std::error;
 use crate::challenge_result::ChallengeResult;
 
 struct Args {
@@ -11,12 +13,30 @@ struct Args {
     day: u8,
 }
 
+#[derive(Debug, Copy, Clone)]
 enum ArgsError {
     NoYear,
-    NoIntYear,
+    NonIntYear,
+    OutOfRangeYear,
     NoDay,
     NonIntDay,
+    OutOfRangeDay,
 }
+
+impl fmt::Display for ArgsError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ArgsError::NoYear => write!(f, ""),
+            ArgsError::NonIntYear => write!(f, ""),
+            ArgsError::OutOfRangeYear => write!(f, ""),
+            ArgsError::NoDay => write!(f, ""),
+            ArgsError::NonIntDay => write!(f, ""),
+            ArgsError::OutOfRangeDay => write!(f, ""),
+        }
+    }
+}
+
+impl error::Error for ArgsError {}
 
 fn main() {
     match parse_args() {
@@ -33,17 +53,8 @@ fn main() {
                 eprintln!("Challenge input could not be read.\nReason: {}", e);
             }
         },
-        Err(ArgsError::NoYear) => {
-            eprintln!("Please pass in a challenge year.");
-        }
-        Err(ArgsError::NoIntYear) => {
-            eprintln!("Please pass in a challenge year as a number.");
-        }
-        Err(ArgsError::NoDay) => {
-            eprintln!("Please pass in a challenge day.");
-        }
-        Err(ArgsError::NonIntDay) => {
-            eprintln!("Please pass in a challenge day as a number.");
+        Err(error) => {
+            eprintln!("{}", error);
         }
     }
 }
@@ -72,7 +83,7 @@ fn parse_args() -> Result<Args, ArgsError> {
                 Err(ArgsError::NoDay)
             }
         } else {
-            Err(ArgsError::NoIntYear)
+            Err(ArgsError::NonIntYear)
         }
     } else {
         Err(ArgsError::NoYear)
