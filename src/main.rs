@@ -17,21 +17,17 @@ struct Args {
 enum ArgsError {
     NoYear,
     NonIntYear,
-    OutOfRangeYear,
     NoDay,
     NonIntDay,
-    OutOfRangeDay,
 }
 
 impl fmt::Display for ArgsError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ArgsError::NoYear => write!(f, ""),
-            ArgsError::NonIntYear => write!(f, ""),
-            ArgsError::OutOfRangeYear => write!(f, ""),
-            ArgsError::NoDay => write!(f, ""),
-            ArgsError::NonIntDay => write!(f, ""),
-            ArgsError::OutOfRangeDay => write!(f, ""),
+            ArgsError::NoYear => write!(f, "Please pass a year in."),
+            ArgsError::NonIntYear => write!(f, "A year must be a number."),
+            ArgsError::NoDay => write!(f, "Please pass a day in."),
+            ArgsError::NonIntDay => write!(f, "A day must be a number."),
         }
     }
 }
