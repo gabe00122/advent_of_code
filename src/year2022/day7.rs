@@ -64,6 +64,13 @@ impl<'a> FileSystem<'a> {
 
     fn set_dir_size(&mut self, dir_index: usize, files_size: u32) {
         self.directories[dir_index].files_size = files_size;
+
+        // This won't work if the file_size is set multiple times
+        let mut current_index = dir_index;
+        while let Some(next_index) = self.directories[current_index].parent_index {
+            self.directories[next_index].files_size += files_size;
+            current_index = next_index;
+        }
     }
 }
 
@@ -76,7 +83,10 @@ fn parse_filesystem(input: &str) -> FileSystem {
 
         match lines.next().expect("No command.") {
             "ls" => {
-                let size = lines.flat_map(| part | part.parse::<u32>().ok()).sum();
+                let size = lines
+                    .flat_map(|parts| parts.split(" ").next())
+                    .flat_map(|first_part| first_part.parse::<u32>().ok())
+                    .sum();
                 filesystem.set_dir_size(current_dir, size)
             }
             "cd /" => {
@@ -99,42 +109,23 @@ fn parse_filesystem(input: &str) -> FileSystem {
 pub fn run(input: &str) -> ChallengeResult {
     let filesystem = parse_filesystem(input);
 
-    let (size, count) = count_large_directories(&filesystem, 0);
-
-    println!("size: {}", size);
-    println!("count: {}", count);
-
-    Ok(Solution::from(filesystem.directories.len(), 0))
-}
-
-fn count_large_directories(filesystem: &FileSystem, directory_index: usize) -> (u32, u32) {
-    let (children_size, children_count) = filesystem.directories[directory_index]
-        .children_indices
+    let part1 = filesystem
+        .directories
         .iter()
-        .fold((0, 0), |(accum_size, accum_count), &child_dir_index| {
-            let (child_size, child_count) = count_large_directories(filesystem, child_dir_index);
+        .map(|dir| dir.files_size)
+        .filter(|&file_size| file_size <= 100000)
+        .sum();
 
-            (accum_size + child_size, accum_count + child_count)
-        });
+    let total_space = 70000000;
+    let target_space = 30000000;
+    let used_space = filesystem.directories[0].files_size;
+    let need_to_free = used_space - (total_space - target_space);
 
-    let total_size = filesystem.directories[directory_index].files_size + children_size;
-    let total_count = if total_size <= 100000 { total_size } else { 0 } + children_count;
+    let part2 = filesystem.directories.iter()
+        .map(|dir| dir.files_size)
+        .filter(|&files_size| files_size > need_to_free)
+        .min()
+        .expect("No answer for part2");
 
-    (total_size, total_count)
-}
-
-fn count_large_directories2(filesystem: &FileSystem, directory_index: usize) -> (u32, u32) {
-    let (children_size, children_count) = filesystem.directories[directory_index]
-        .children_indices
-        .iter()
-        .fold((0, 0), |(accum_size, accum_count), &child_dir_index| {
-            let (child_size, child_count) = count_large_directories2(filesystem, child_dir_index);
-
-            (accum_size + child_size, accum_count + child_count)
-        });
-
-    let total_size = filesystem.directories[directory_index].files_size + children_size;
-    let total_count = if total_size <= 100000 { total_size } else { 0 } + children_count;
-
-    (total_size, total_count)
+    Ok(Solution::from(part1, part2))
 }
