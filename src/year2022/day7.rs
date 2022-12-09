@@ -65,7 +65,7 @@ impl<'a> FileSystem<'a> {
     fn set_dir_size(&mut self, dir_index: usize, files_size: u32) {
         self.directories[dir_index].files_size = files_size;
 
-        // This won't work if the file_size is set multiple times
+        // This won't work if the set_dir_size is called multiple times
         let mut current_index = dir_index;
         while let Some(next_index) = self.directories[current_index].parent_index {
             self.directories[next_index].files_size += files_size;
