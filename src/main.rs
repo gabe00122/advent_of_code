@@ -1,3 +1,5 @@
+extern crate core;
+
 mod challenge_input;
 mod challenge_result;
 mod year2021;
