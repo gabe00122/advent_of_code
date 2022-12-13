@@ -114,7 +114,7 @@ pub fn run(input: &str) -> ChallengeResult {
         .iter()
         .map(|dir| dir.files_size)
         .filter(|&file_size| file_size <= 100000)
-        .sum();
+        .sum::<u32>();
 
     let total_space = 70000000;
     let target_space = 30000000;

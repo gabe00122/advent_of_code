@@ -1,11 +1,11 @@
 use crate::challenge_result::{ChallengeResult, Solution};
 
 pub fn run(input: &str) -> ChallengeResult {
-    let mut largest_sums: [u64; 3] = [0, 0, 0];
-    let mut local_sum: u64 = 0;
+    let mut largest_sums: [i32; 3] = [0, 0, 0];
+    let mut local_sum: i32 = 0;
 
     for line in input.lines() {
-        if let Ok(line_value) = line.parse::<u64>() {
+        if let Ok(line_value) = line.parse::<i32>() {
             local_sum += line_value;
         } else {
             if local_sum > largest_sums[0] {
@@ -23,5 +23,5 @@ pub fn run(input: &str) -> ChallengeResult {
         }
     }
 
-    Ok(Solution::from(largest_sums[0], largest_sums.iter().sum()))
+    Ok(Solution::from(largest_sums[0], largest_sums.iter().sum::<i32>()))
 }

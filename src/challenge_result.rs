@@ -13,7 +13,7 @@ impl Solution {
         Solution { part1, part2 }
     }
 
-    pub fn from<T: ToString>(part1: T, part2: T) -> Solution {
+    pub fn from<A: ToString, B: ToString>(part1: A, part2: B) -> Solution {
         Solution {
             part1: part1.to_string(),
             part2: part2.to_string(),
