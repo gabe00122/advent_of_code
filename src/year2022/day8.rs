@@ -158,5 +158,5 @@ pub fn run(input: &str) -> ChallengeResult {
     scenic_score.calculate_score(&trees, index_left);
     scenic_score.calculate_score(&trees, index_right);
 
-    Ok(Solution::from(tree_visibility.count(), senic_score.max()))
+    Ok(Solution::from(tree_visibility.count(), scenic_score.max()))
 }
