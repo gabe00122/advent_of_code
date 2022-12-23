@@ -130,13 +130,20 @@ where
     }
 }
 
-// impl<T> FromStr for Grid<T>
-// where
-//     T: FromStr,
-// {
-//     type Err = T::Err;
-//
-//     fn from_str(s: &str) -> Result<Self, Self::Err> {
-//         todo!()
-//     }
-// }
+impl FromStr for Grid<char> {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let width = s.chars()
+            .enumerate()
+            .find(|&(_, c)| c == '\n')
+            .map_or(1, |(width, _)| width);
+
+        let data: Vec<char> = s.chars().filter(|&c| c != '\n').collect();
+        Ok(Grid {
+            width,
+            height: data.len() / width,
+            data,
+        })
+    }
+}

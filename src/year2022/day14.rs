@@ -42,7 +42,9 @@ pub fn run(input: &str) -> ChallengeResult {
         *cell = Cell::Sand;
     }
 
-    println!("{}", grid);
+    "123456789".chars().flat_map(|c| c.to_digit(10)).for_each(|d| {
+        println!("{}", d);
+    });
 
     Ok(Solution::from(0, 0))
 }

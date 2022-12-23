@@ -8,7 +8,7 @@ mod year2022;
 use std::env;
 use std::fmt;
 use std::error;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 use crate::challenge_result::ChallengeResult;
 
 struct Args {
