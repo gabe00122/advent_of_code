@@ -27,15 +27,14 @@ impl Display for Cell {
 }
 
 pub fn run(input: &str) -> ChallengeResult {
-    let paths: Vec<Vec<Point<i32>>> = input
+    let paths: Vec<Vec<Point<usize>>> = input
         .lines()
         .map(|line| {
             line.split(" -> ")
-                .map(|p| p.parse())
-                .collect::<Result<Vec<_>, _>>()
+                .map(|p| p.parse().unwrap())
+                .collect()
         })
-        .collect::<Result<Vec<_>, _>>()
-        .expect("Line failed to parse");
+        .collect();
 
     let mut grid: Grid<Cell> = Grid::new(10, 10);
 

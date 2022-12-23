@@ -1,6 +1,7 @@
 use std::fmt::{Display, Formatter, Write};
 use std::iter::StepBy;
 use std::slice::{Iter, IterMut};
+use std::str::FromStr;
 
 pub struct Grid<T> {
     pub width: usize,
@@ -128,3 +129,14 @@ where
         Ok(())
     }
 }
+
+// impl<T> FromStr for Grid<T>
+// where
+//     T: FromStr,
+// {
+//     type Err = T::Err;
+//
+//     fn from_str(s: &str) -> Result<Self, Self::Err> {
+//         todo!()
+//     }
+// }
