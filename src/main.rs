@@ -8,6 +8,7 @@ mod year2022;
 use std::env;
 use std::fmt;
 use std::error;
+use std::time::{Duration, Instant};
 use crate::challenge_result::ChallengeResult;
 
 struct Args {
@@ -39,12 +40,16 @@ impl error::Error for ArgsError {}
 fn main() {
     match parse_args() {
         Ok(Args { year, day }) => match challenge_input::get("input", year, day) {
-            Ok(input) => match run_challenge(&input, year, day) {
-                Ok(result) => {
-                    println!("{} : {}", result.part1, result.part2);
-                }
-                Err(e) => {
-                    eprintln!("Challenge Error: {}", e);
+            Ok(input) => {
+                let start = Instant::now();
+                match run_challenge(&input, year, day) {
+                    Ok(result) => {
+                        let duration = start.elapsed();
+                        println!("{} : {}\nDuration: {:?}", result.part1, result.part2, duration);
+                    }
+                    Err(e) => {
+                        eprintln!("Challenge Error: {}", e);
+                    }
                 }
             },
             Err(e) => {
