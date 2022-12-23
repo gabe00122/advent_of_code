@@ -55,10 +55,7 @@ impl TreeVisibility {
         }
     }
 
-    fn calculate_visibility<F>(&mut self, trees: &Trees, index_fn: F)
-    where
-        F: Fn(usize, usize) -> usize,
-    {
+    fn calculate_visibility(&mut self, trees: &Trees, index_fn: impl Fn(usize, usize) -> usize) {
         for i in 0..SIZE {
             let mut highest = -1;
             for j in 0..SIZE {
@@ -95,10 +92,7 @@ impl ScenicScore {
         }
     }
 
-    fn calculate_score<F>(&mut self, trees: &Trees, index_fn: F)
-    where
-        F: Fn(usize, usize) -> usize,
-    {
+    fn calculate_score(&mut self, trees: &Trees, index_fn: impl Fn(usize, usize) -> usize) {
         let mut heights: Vec<TreeHeightNode> = Vec::new();
 
         for i in 0..SIZE {
