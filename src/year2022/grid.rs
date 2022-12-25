@@ -1,3 +1,4 @@
+use std::error::Error;
 use std::fmt::{Display, Formatter, Write};
 use std::iter::StepBy;
 use std::slice::{Iter, IterMut};
@@ -130,16 +131,45 @@ where
     }
 }
 
-impl FromStr for Grid<char> {
-    type Err = ();
+#[derive(Debug, Copy, Clone)]
+pub struct ParseGridError;
+
+impl Display for ParseGridError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Error parsing grid data")
+    }
+}
+
+impl Error for ParseGridError {}
+
+impl<T> FromStr for Grid<T>
+where
+    T: FromStr,
+{
+    type Err = ParseGridError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let width = s.chars()
-            .enumerate()
-            .find(|&(_, c)| c == '\n')
-            .map_or(1, |(width, _)| width);
+        let mut found_width = false;
+        let mut width = 0;
+        let mut data: Vec<T> = Vec::new();
 
-        let data: Vec<char> = s.chars().filter(|&c| c != '\n').collect();
+        let mut current = s;
+        while !current.is_empty() {
+            let (left, right) = current.split_at(1);
+            current = right;
+
+            if left != "\n" {
+                let value: T = left.parse().map_err(|_| ParseGridError)?;
+                data.push(value);
+
+                if !found_width {
+                    width += 1;
+                }
+            } else {
+                found_width = true;
+            }
+        }
+
         Ok(Grid {
             width,
             height: data.len() / width,

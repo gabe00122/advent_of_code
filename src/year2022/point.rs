@@ -92,12 +92,14 @@ impl<T: FromStr> FromStr for Point<T> {
     type Err = ParsePointError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut s_iter = s.split(',').flat_map(|it| it.parse());
+        let (x, y) = s.split_once(",").ok_or(ParsePointError)?;
 
-        if let (Some(x), Some(y)) = (s_iter.next(), s_iter.next()) {
-            Ok(Point { x, y })
-        } else {
-            Err(ParsePointError)
-        }
+        let x_fromstr = x.parse::<T>().map_err(|_| ParsePointError)?;
+        let y_fromstr = y.parse::<T>().map_err(|_| ParsePointError)?;
+
+        Ok(Point {
+            x: x_fromstr,
+            y: y_fromstr,
+        })
     }
 }

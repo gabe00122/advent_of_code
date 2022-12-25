@@ -27,24 +27,26 @@ impl Display for Cell {
 }
 
 pub fn run(input: &str) -> ChallengeResult {
-    let paths: Vec<Vec<Point<usize>>> = input
-        .lines()
-        .map(|line| {
-            line.split(" -> ")
-                .map(|p| p.parse().unwrap())
-                .collect()
-        })
-        .collect();
+    // let paths: Vec<Vec<Point<usize>>> = input
+    //     .lines()
+    //     .map(|line| {
+    //         line.split(" -> ")
+    //             .map(|p| p.parse().unwrap())
+    //             .collect()
+    //     })
+    //     .collect();
+    //
+    // let mut grid: Grid<Cell> = Grid::new(10, 10);
+    //
+    // for cell in grid.iter_col_mut(5, 2, 8) {
+    //     *cell = Cell::Sand;
+    // }
+    //
+    // let c: char = "a".parse().unwrap();
+    // println!("{}", c);
 
-    let mut grid: Grid<Cell> = Grid::new(10, 10);
-
-    for cell in grid.iter_col_mut(5, 2, 8) {
-        *cell = Cell::Sand;
-    }
-
-    "123456789".chars().flat_map(|c| c.to_digit(10)).for_each(|d| {
-        println!("{}", d);
-    });
+    let grid: Grid<char> = input.parse()?;
+    println!("{}", grid);
 
     Ok(Solution::from(0, 0))
 }
