@@ -1,156 +1,116 @@
 use crate::challenge_result::{ChallengeResult, Solution};
-use std::error::Error;
-use std::fmt::{Display, Formatter};
-use std::str::FromStr;
+use crate::year2022::grid::Grid;
 
-const SIZE: usize = 99;
+fn visibility(trees: &Grid<i32>) -> Grid<bool> {
+    let mut visibility = Grid::new(trees.width, trees.height, || false);
 
-struct Trees {
-    data: Box<[i8; SIZE * SIZE]>,
+    for x in 0..trees.width {
+        visibility_line(trees.iter_full_col(x), visibility.iter_full_col_mut(x));
+        visibility_line(
+            trees.iter_full_col(x).rev(),
+            visibility.iter_full_col_mut(x).rev(),
+        );
+    }
+
+    for y in 0..trees.height {
+        visibility_line(trees.iter_full_row(y), visibility.iter_full_row_mut(y));
+        visibility_line(
+            trees.iter_full_row(y).rev(),
+            visibility.iter_full_row_mut(y).rev(),
+        );
+    }
+
+    visibility
 }
 
-impl Trees {
-    fn new() -> Trees {
-        Trees {
-            data: Box::new([0; SIZE * SIZE]),
+fn visibility_line<'a, 'b, T, V>(trees: T, visible: V)
+where
+    T: Iterator<Item = &'a i32>,
+    V: Iterator<Item = &'b mut bool>,
+{
+    trees.zip(visible).fold(-1, |highest, (&current, out)| {
+        if current > highest {
+            *out = true;
+            current
+        } else {
+            highest
         }
-    }
+    });
 }
 
-#[derive(Debug, Copy, Clone)]
-struct TreeParseError;
-impl Display for TreeParseError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Tree parse error")
-    }
-}
-impl Error for TreeParseError {}
+fn scenic_score(trees: &Grid<i32>) -> Grid<i32> {
+    let mut scenic = Grid::new(trees.width, trees.height, || 1);
+    let mut heights: Vec<TreeHeightNode> = Vec::new();
 
-impl FromStr for Trees {
-    type Err = TreeParseError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut board = Trees::new();
-
-        let mut i = 0usize;
-        for line in s.lines() {
-            for tree in line.chars() {
-                board.data[i] = tree.to_digit(10).unwrap() as i8;
-                i += 1;
-            }
-        }
-
-        Ok(board)
-    }
-}
-
-struct TreeVisibility {
-    data: Box<[bool; SIZE * SIZE]>,
-}
-
-impl TreeVisibility {
-    fn new() -> TreeVisibility {
-        TreeVisibility {
-            data: Box::new([false; SIZE * SIZE]),
-        }
+    for x in 0..trees.width {
+        scenic_score_line(
+            trees.iter_full_col(x),
+            scenic.iter_full_col_mut(x),
+            &mut heights,
+        );
+        scenic_score_line(
+            trees.iter_full_col(x).rev(),
+            scenic.iter_full_col_mut(x).rev(),
+            &mut heights,
+        );
     }
 
-    fn calculate_visibility(&mut self, trees: &Trees, index_fn: impl Fn(usize, usize) -> usize) {
-        for i in 0..SIZE {
-            let mut highest = -1;
-            for j in 0..SIZE {
-                let index = index_fn(i, j);
-                let current = trees.data[index];
-
-                if current > highest {
-                    highest = current;
-                    self.data[index] = true;
-                }
-            }
-        }
+    for y in 0..trees.height {
+        scenic_score_line(
+            trees.iter_full_row(y),
+            scenic.iter_full_row_mut(y),
+            &mut heights,
+        );
+        scenic_score_line(
+            trees.iter_full_row(y).rev(),
+            scenic.iter_full_row_mut(y).rev(),
+            &mut heights,
+        );
     }
 
-    fn count(&self) -> usize {
-        self.data.iter().filter(|&&visible| visible).count()
-    }
+    scenic
 }
 
 #[derive(Copy, Clone)]
 struct TreeHeightNode {
-    height: i8,
+    height: i32,
     position: i32,
 }
 
-struct ScenicScore {
-    data: Box<[i32; SIZE * SIZE]>,
-}
+fn scenic_score_line<'a, 'b, T, S>(trees: T, scenic: S, heights: &mut Vec<TreeHeightNode>)
+where
+    T: Iterator<Item = &'a i32>,
+    S: Iterator<Item = &'b mut i32>,
+{
+    for (position, (&current, out)) in trees.zip(scenic).enumerate() {
+        let position = position as i32;
 
-impl ScenicScore {
-    fn new() -> ScenicScore {
-        ScenicScore {
-            data: Box::new([1; SIZE * SIZE]),
+        while matches!(heights.last(), Some(last) if last.height < current) {
+            heights.pop();
         }
+
+        *out *= position - heights.last().map_or(0, |last| last.position);
+        heights.push(TreeHeightNode {
+            height: current,
+            position,
+        });
     }
 
-    fn calculate_score(&mut self, trees: &Trees, index_fn: impl Fn(usize, usize) -> usize) {
-        let mut heights: Vec<TreeHeightNode> = Vec::new();
-
-        for i in 0..SIZE {
-            for j in 0..SIZE {
-                let index = index_fn(i, j);
-                let current_height = trees.data[index];
-                let current_position = j as i32;
-
-                while matches!(heights.last(), Some(last) if last.height < current_height) {
-                    heights.pop();
-                }
-
-                self.data[index] *=
-                    current_position - heights.last().map_or(0, |last| last.position);
-                heights.push(TreeHeightNode {
-                    height: current_height,
-                    position: current_position,
-                })
-            }
-            heights.clear();
-        }
-    }
-
-    fn max(&self) -> i32 {
-        self.data.iter().cloned().max().unwrap()
-    }
-}
-
-fn index_down(i: usize, j: usize) -> usize {
-    j * SIZE + i
-}
-
-fn index_up(i: usize, j: usize) -> usize {
-    (SIZE - j - 1) * SIZE + i
-}
-
-fn index_left(i: usize, j: usize) -> usize {
-    i * SIZE + j
-}
-
-fn index_right(i: usize, j: usize) -> usize {
-    i * SIZE + (SIZE - j - 1)
+    heights.clear();
 }
 
 pub fn run(input: &str) -> ChallengeResult {
-    let trees: Trees = input.parse().unwrap();
+    //Time: 600µs
 
-    let mut tree_visibility = TreeVisibility::new();
-    tree_visibility.calculate_visibility(&trees, index_down);
-    tree_visibility.calculate_visibility(&trees, index_up);
-    tree_visibility.calculate_visibility(&trees, index_left);
-    tree_visibility.calculate_visibility(&trees, index_right);
+    let trees: Grid<i32> = input.parse()?;
 
-    let mut scenic_score = ScenicScore::new();
-    scenic_score.calculate_score(&trees, index_down);
-    scenic_score.calculate_score(&trees, index_up);
-    scenic_score.calculate_score(&trees, index_left);
-    scenic_score.calculate_score(&trees, index_right);
+    //part1
+    let visibility = visibility(&trees);
+    let count = visibility.iter().cloned().filter(|&value| value).count();
 
-    Ok(Solution::from(tree_visibility.count(), scenic_score.max()))
+    //part2
+    let scenic = scenic_score(&trees);
+    let max = scenic.iter().cloned().max().unwrap_or(0);
+
+    Ok(Solution::from(count, max))
 }

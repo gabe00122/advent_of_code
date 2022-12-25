@@ -11,12 +11,12 @@ pub struct Grid<T> {
 }
 
 impl<T> Grid<T> {
-    pub fn new(width: usize, height: usize) -> Grid<T>
+    pub fn new<F>(width: usize, height: usize, default: F) -> Grid<T>
     where
-        T: Default,
+        F: Fn() -> T,
     {
         let mut data = Vec::new();
-        data.resize_with(width * height, T::default);
+        data.resize_with(width * height, default);
         Grid {
             data,
             width,
@@ -46,16 +46,9 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_col(&self, col: usize, start: usize, end: usize) -> StepBy<Iter<T>> {
-        if col < self.width {
-            let start_index = col + (start * self.width);
-            let end_index = col + (end * self.width);
-            self.data[start_index..end_index].iter().step_by(self.width)
-        } else {
-            panic!(
-                "out of bounds. Column must be less than {:?}, but is {:?}.",
-                self.width, col
-            )
-        }
+        let start_index = col + (start * self.width);
+        let end_index = col + ((end - 1) * self.width);
+        self.data[start_index..=end_index].iter().step_by(self.width)
     }
 
     pub fn iter_full_col(&self, col: usize) -> StepBy<Iter<T>> {
@@ -63,18 +56,11 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_col_mut(&mut self, col: usize, start: usize, end: usize) -> StepBy<IterMut<T>> {
-        if col < self.width {
-            let start_index = col + (start * self.width);
-            let end_index = col + (end * self.width);
-            self.data[start_index..end_index]
-                .iter_mut()
-                .step_by(self.width)
-        } else {
-            panic!(
-                "out of bounds. Column must be less than {:?}, but is {:?}.",
-                self.width, col
-            )
-        }
+        let start_index = col + (start * self.width);
+        let end_index = col + ((end - 1) * self.width);
+        self.data[start_index..=end_index]
+            .iter_mut()
+            .step_by(self.width)
     }
 
     pub fn iter_full_col_mut(&mut self, col: usize) -> StepBy<IterMut<T>> {
@@ -82,15 +68,8 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_row(&self, row: usize, start: usize, end: usize) -> Iter<T> {
-        if row < self.height {
-            let row_index = row * self.width;
-            self.data[row_index + start..row_index + end].iter()
-        } else {
-            panic!(
-                "out of bounds. Row must be less than {:?}, but is {:?}.",
-                self.height, row
-            )
-        }
+        let row_index = row * self.width;
+        self.data[row_index + start..row_index + end].iter()
     }
 
     pub fn iter_full_row(&self, row: usize) -> Iter<T> {
@@ -98,15 +77,8 @@ impl<T> Grid<T> {
     }
 
     pub fn iter_row_mut(&mut self, row: usize, start: usize, end: usize) -> IterMut<T> {
-        if row < self.height {
-            let row_index = row * self.width;
-            self.data[row_index + start..row_index + end].iter_mut()
-        } else {
-            panic!(
-                "out of bounds. Row must be less than {:?}, but is {:?}.",
-                self.height, row
-            )
-        }
+        let row_index = row * self.width;
+        self.data[row_index + start..row_index + end].iter_mut()
     }
 
     pub fn iter_full_row_mut(&mut self, row: usize) -> IterMut<T> {

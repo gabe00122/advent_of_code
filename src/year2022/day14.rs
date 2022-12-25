@@ -45,8 +45,8 @@ pub fn run(input: &str) -> ChallengeResult {
     // let c: char = "a".parse().unwrap();
     // println!("{}", c);
 
-    let grid: Grid<char> = input.parse()?;
-    println!("{}", grid);
+    // let grid: Grid<char> = input.parse()?;
+    // println!("{}", grid);
 
     Ok(Solution::from(0, 0))
 }
