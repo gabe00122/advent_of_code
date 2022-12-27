@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
-use std::ops::{Add, Div, Mul, Sub};
+use std::ops::{Add, Div, Mul, Sub, AddAssign, SubAssign, MulAssign, DivAssign};
 use std::str::FromStr;
 
 #[derive(Copy, Clone, Eq, PartialEq)]
@@ -65,6 +65,54 @@ where
 
     fn div(self, rhs: Self) -> Self::Output {
         Point {
+            x: self.x / rhs.x,
+            y: self.y / rhs.y,
+        }
+    }
+}
+
+impl<T> AddAssign for Point<T>
+    where
+        T: Copy + Add<Output = T>,
+{
+    fn add_assign(&mut self, rhs: Self) {
+        *self = Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
+}
+
+impl<T> SubAssign for Point<T>
+where
+    T: Copy + Sub<Output = T>,
+{
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+        }
+    }
+}
+
+impl<T> MulAssign for Point<T>
+where
+    T: Copy + Mul<Output = T>,
+{
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = Self {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+        }
+    }
+}
+
+impl<T> DivAssign for Point<T>
+where
+    T: Copy + Div<Output = T>,
+{
+    fn div_assign(&mut self, rhs: Self) {
+        *self = Self {
             x: self.x / rhs.x,
             y: self.y / rhs.y,
         }

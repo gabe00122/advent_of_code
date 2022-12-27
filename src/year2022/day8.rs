@@ -5,7 +5,12 @@ fn visibility(trees: &Grid<i32>) -> Grid<bool> {
     let mut visibility = Grid::new(trees.width, trees.height, || false);
 
     for x in 0..trees.width {
-        visibility_line(trees.iter_full_col(x), visibility.iter_full_col_mut(x));
+        //down
+        visibility_line(
+            trees.iter_full_col(x),
+            visibility.iter_full_col_mut(x)
+        );
+        //up
         visibility_line(
             trees.iter_full_col(x).rev(),
             visibility.iter_full_col_mut(x).rev(),
@@ -13,7 +18,12 @@ fn visibility(trees: &Grid<i32>) -> Grid<bool> {
     }
 
     for y in 0..trees.height {
-        visibility_line(trees.iter_full_row(y), visibility.iter_full_row_mut(y));
+        //left
+        visibility_line(
+            trees.iter_full_row(y),
+            visibility.iter_full_row_mut(y)
+        );
+        //right
         visibility_line(
             trees.iter_full_row(y).rev(),
             visibility.iter_full_row_mut(y).rev(),
@@ -43,11 +53,13 @@ fn scenic_score(trees: &Grid<i32>) -> Grid<i32> {
     let mut heights: Vec<TreeHeightNode> = Vec::new();
 
     for x in 0..trees.width {
+        //down
         scenic_score_line(
             trees.iter_full_col(x),
             scenic.iter_full_col_mut(x),
             &mut heights,
         );
+        //up
         scenic_score_line(
             trees.iter_full_col(x).rev(),
             scenic.iter_full_col_mut(x).rev(),
@@ -56,11 +68,13 @@ fn scenic_score(trees: &Grid<i32>) -> Grid<i32> {
     }
 
     for y in 0..trees.height {
+        //left
         scenic_score_line(
             trees.iter_full_row(y),
             scenic.iter_full_row_mut(y),
             &mut heights,
         );
+        //right
         scenic_score_line(
             trees.iter_full_row(y).rev(),
             scenic.iter_full_row_mut(y).rev(),

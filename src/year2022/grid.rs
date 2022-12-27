@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter, Write};
 use std::iter::StepBy;
+use std::ops::{Index, IndexMut};
 use std::slice::{Iter, IterMut};
 use std::str::FromStr;
 
@@ -83,6 +84,20 @@ impl<T> Grid<T> {
 
     pub fn iter_full_row_mut(&mut self, row: usize) -> IterMut<T> {
         self.iter_row_mut(row, 0, self.width)
+    }
+}
+
+impl<T> Index<usize> for Grid<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.data[index]
+    }
+}
+
+impl<T> IndexMut<usize> for Grid<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        &mut self.data[index]
     }
 }
 
