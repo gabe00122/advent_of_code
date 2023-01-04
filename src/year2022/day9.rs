@@ -1,6 +1,5 @@
 use std::error::Error;
-use std::fmt::{Display, Formatter};
-use std::str::FromStr;
+use std::fmt::{Display, Formatter};use std::str::FromStr;
 use crate::challenge_result::{ChallengeResult, Solution};
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
