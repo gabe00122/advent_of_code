@@ -1,3 +1,4 @@
+use core::mem::{size_of, align_of};
 use std::str::FromStr;
 use crate::challenge_result::{ChallengeResult, Solution};
 
@@ -23,8 +24,16 @@ impl FromStr for Direction {
     }
 }
 
-pub fn run(input: &str) -> ChallengeResult {
+#[derive(Copy, Clone)]
+struct Move {
+    direction: Direction,
+    distance: u8,
+}
 
+pub fn run(input: &str) -> ChallengeResult {
+    let test: u8 = 1 << 5;
+
+    println!("Size: {}, Alignment: {}", size_of::<Move>(), align_of::<Move>());
 
     Ok(Solution::from(0, 0))
 }

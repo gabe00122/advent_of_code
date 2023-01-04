@@ -1,5 +1,6 @@
 mod point;
 mod grid;
+mod error;
 
 mod day1;
 mod day2;
