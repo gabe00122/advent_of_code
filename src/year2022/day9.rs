@@ -87,7 +87,7 @@ impl FromStr for Move {
     }
 }
 
-fn make_axis_adjacent(value: i8) -> i8 {
+fn find_adjacent_axis(value: i8) -> i8 {
     if value > 0 {
         value - 1
     } else if value < 0 {
@@ -97,13 +97,13 @@ fn make_axis_adjacent(value: i8) -> i8 {
     }
 }
 
-fn make_position_adjacent(position: Point<i8>) -> Point<i8> {
+fn find_adjacent_position(position: Point<i8>) -> Point<i8> {
     if position.x >= -1 && position.x <= 1 && position.y >= -1 && position.y <= 1 {
         position
     } else {
         Point::new(
-            make_axis_adjacent(position.x),
-            make_axis_adjacent(position.y),
+            find_adjacent_axis(position.x),
+            find_adjacent_axis(position.y),
         )
     }
 }
@@ -119,8 +119,7 @@ fn part1(moves: &[Move]) -> usize {
 
         for _ in 0..distance {
             head += direction;
-            relative_tail = make_position_adjacent(relative_tail - direction);
-
+            relative_tail = find_adjacent_position(relative_tail - direction);
             visited.insert(head + relative_tail);
         }
     }
@@ -143,7 +142,7 @@ fn part2(moves: &[Move]) -> usize {
 
             for tail in tails.iter_mut() {
                 let unadjacent = *tail - delta;
-                *tail = make_position_adjacent(unadjacent);
+                *tail = find_adjacent_position(unadjacent);
 
                 delta = *tail - unadjacent;
                 position += *tail;
