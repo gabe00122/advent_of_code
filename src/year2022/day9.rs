@@ -87,7 +87,26 @@ impl FromStr for Move {
     }
 }
 
+fn make_axis_adjacent(value: i8) -> i8 {
+    if value > 0 {
+        value - 1
+    } else if value < 0 {
+        value + 1
+    } else {
+        0
+    }
+}
 
+fn make_position_adjacent(position: Point<i8>) -> Point<i8> {
+    if position.x >= -1 && position.x <= 1 && position.y >= -1 && position.y <= 1 {
+        position
+    } else {
+        Point::new(
+            make_axis_adjacent(position.x),
+            make_axis_adjacent(position.y),
+        )
+    }
+}
 
 fn part1(moves: &[Move]) -> usize {
     let mut visited: HashSet<Point<i8>> = HashSet::new();
@@ -100,18 +119,7 @@ fn part1(moves: &[Move]) -> usize {
 
         for _ in 0..distance {
             head += direction;
-            relative_tail -= direction;
-
-            if relative_tail.x < -1 {
-                relative_tail = Point::new(-1, 0);
-            } else if relative_tail.x > 1 {
-                relative_tail = Point::new(1, 0);
-            }
-            if relative_tail.y < -1 {
-                relative_tail = Point::new(0, -1);
-            } else if relative_tail.y > 1 {
-                relative_tail = Point::new(0, 1);
-            }
+            relative_tail = make_position_adjacent(relative_tail - direction);
 
             visited.insert(head + relative_tail);
         }
@@ -128,8 +136,6 @@ pub fn run(input: &str) -> ChallengeResult {
             ParseLineError::new(i, err)
         ))
         .collect::<Result<_, _>>()?;
-
-
 
     Ok(Solution::from(part1(&moves), 0))
 }
