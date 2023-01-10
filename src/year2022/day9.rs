@@ -1,6 +1,11 @@
+use std::collections::HashSet;
 use std::error::Error;
-use std::fmt::{Display, Formatter};use std::str::FromStr;
+use std::fmt::{Display, Formatter, write};
+use std::num::ParseIntError;
+use std::str::FromStr;
 use crate::challenge_result::{ChallengeResult, Solution};
+use crate::year2022::error::ParseLineError;
+use crate::year2022::point::Point;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 enum Direction {
@@ -10,12 +15,23 @@ enum Direction {
     Right,
 }
 
+impl Direction {
+    fn to_point(&self) -> Point<i8> {
+        match self {
+            Direction::Up => Point::new(0, 1),
+            Direction::Down => Point::new(0, -1),
+            Direction::Left => Point::new(-1, 0),
+            Direction::Right => Point::new(1, 0),
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone)]
 struct ParseDirectionError;
 
 impl Display for ParseDirectionError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "ParseDirectionError")
+        write!(f, "direction must be 'U', 'D', 'L' or 'R'")
     }
 }
 
@@ -38,21 +54,21 @@ impl FromStr for Direction {
 #[derive(Debug, Copy, Clone)]
 struct Move {
     direction: Direction,
-    distance: u8,
+    distance: i8,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Clone)]
 enum ParseMoveError {
-    Direction,
-    Distance,
+    Direction(ParseDirectionError),
+    Distance(ParseIntError),
 }
 
 impl Display for ParseMoveError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            ParseMoveError::Direction => "ParseMoveError: Direction",
-            ParseMoveError::Distance => "ParseMoveError: Distance",
-        })
+        match self {
+            ParseMoveError::Direction(err) => write!(f, "{}", err),
+            ParseMoveError::Distance(err) => write!(f, "{}", err),
+        }
     }
 }
 
@@ -65,19 +81,55 @@ impl FromStr for Move {
         let (left, right) = s.split_at(1);
 
         Ok(Move {
-            direction: left.parse().map_err(|_| ParseMoveError::Direction)?,
-            distance: right[1..].parse().map_err(|_| ParseMoveError::Distance)?,
+            direction: left.parse().map_err(ParseMoveError::Direction)?,
+            distance: right[1..].parse().map_err(ParseMoveError::Distance)?,
         })
     }
 }
 
+
+
+fn part1(moves: &[Move]) -> usize {
+    let mut visited: HashSet<Point<i8>> = HashSet::new();
+
+    let mut head = Point::new(0, 0);
+    let mut relative_tail = Point::new(0, 0);
+
+    for &Move { direction, distance } in moves {
+        let direction = direction.to_point();
+
+        for _ in 0..distance {
+            head += direction;
+            relative_tail -= direction;
+
+            if relative_tail.x < -1 {
+                relative_tail = Point::new(-1, 0);
+            } else if relative_tail.x > 1 {
+                relative_tail = Point::new(1, 0);
+            }
+            if relative_tail.y < -1 {
+                relative_tail = Point::new(0, -1);
+            } else if relative_tail.y > 1 {
+                relative_tail = Point::new(0, 1);
+            }
+
+            visited.insert(head + relative_tail);
+        }
+    }
+
+    visited.len()
+}
+
 pub fn run(input: &str) -> ChallengeResult {
-    let lines: Vec<Move> = input
+    let moves: Vec<Move> = input
         .lines()
-        .map(|line| line.parse())
+        .enumerate()
+        .map(|(i, line) | line.parse().map_err(| err |
+            ParseLineError::new(i, err)
+        ))
         .collect::<Result<_, _>>()?;
 
-    println!("{:?}", &lines[..5]);
 
-    Ok(Solution::from(0, 0))
+
+    Ok(Solution::from(part1(&moves), 0))
 }
