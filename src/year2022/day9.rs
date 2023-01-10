@@ -128,6 +128,34 @@ fn part1(moves: &[Move]) -> usize {
     visited.len()
 }
 
+fn part2(moves: &[Move]) -> usize {
+    let mut visited: HashSet<Point<i8>> = HashSet::new();
+    let mut head = Point::new(0, 0);
+    let mut tails: [Point<i8>; 9] = Default::default();
+
+    for &Move { direction, distance } in moves {
+        let direction = direction.to_point();
+
+        for _ in 0..distance {
+            head += direction;
+            let mut position = head;
+            let mut delta = direction;
+
+            for tail in tails.iter_mut() {
+                let unadjacent = *tail - delta;
+                *tail = make_position_adjacent(unadjacent);
+
+                delta = *tail - unadjacent;
+                position += *tail;
+            }
+
+            visited.insert(position);
+        }
+    }
+
+    visited.len()
+}
+
 pub fn run(input: &str) -> ChallengeResult {
     let moves: Vec<Move> = input
         .lines()
@@ -137,5 +165,5 @@ pub fn run(input: &str) -> ChallengeResult {
         ))
         .collect::<Result<_, _>>()?;
 
-    Ok(Solution::from(part1(&moves), 0))
+    Ok(Solution::from(part1(&moves), part2(&moves)))
 }
