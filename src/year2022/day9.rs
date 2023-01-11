@@ -129,13 +129,15 @@ fn part1(moves: &[Move]) -> usize {
 
 fn part2(moves: &[Move]) -> usize {
     let mut visited: HashSet<Point<i8>> = HashSet::new();
+    visited.insert(Point::new(0, 0));
+
     let mut head = Point::new(0, 0);
     let mut tails: [Point<i8>; 9] = Default::default();
 
     for &Move { direction, distance } in moves {
         let direction = direction.to_point();
 
-        for _ in 0..distance {
+        'step_loop: for _ in 0..distance {
             head += direction;
             let mut position = head;
             let mut delta = direction;
@@ -144,6 +146,11 @@ fn part2(moves: &[Move]) -> usize {
                 let unadjacent = *tail - delta;
                 delta = find_adjacent_position(unadjacent);
                 *tail = unadjacent + delta;
+
+                if delta.x == 0 && delta.y == 0 {
+                    continue 'step_loop;
+                }
+
                 position += *tail;
             }
 
