@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 use std::error::Error;
-use std::fmt::{Display, Formatter, write};
+use std::fmt::{Display, Formatter};
 use std::num::ParseIntError;
 use std::str::FromStr;
 use crate::challenge_result::{ChallengeResult, Solution};

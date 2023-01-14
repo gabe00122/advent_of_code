@@ -97,7 +97,7 @@ fn drop_sand(map: &mut Grid<Cell>, start: Point<usize>) -> Point<usize> {
 }
 
 pub fn run(input: &str) -> ChallengeResult {
-    let mut paths = parse_paths(input);
+    let paths = parse_paths(input);
     let mut map = parse_map(&paths);
 
     let start = Point::new(500, 0);
