@@ -1,9 +1,9 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
-use std::ops::{Add, Div, Mul, Sub, AddAssign, SubAssign, MulAssign, DivAssign};
+use std::ops::{Add, Div, Mul, Sub, AddAssign, SubAssign, MulAssign, DivAssign, Neg};
 use std::str::FromStr;
 
-#[derive(Copy, Clone, Eq, PartialEq)]
+#[derive(Copy, Clone, Eq, PartialEq, Hash, Default)]
 pub struct Point<T> {
     pub x: T,
     pub y: T,
@@ -67,6 +67,20 @@ where
         Point {
             x: self.x / rhs.x,
             y: self.y / rhs.y,
+        }
+    }
+}
+
+impl<T> Neg for Point<T>
+where
+    T: Neg<Output = T>,
+{
+    type Output = Point<T>;
+
+    fn neg(self) -> Self::Output {
+        Point {
+            x: -self.x,
+            y: -self.y,
         }
     }
 }

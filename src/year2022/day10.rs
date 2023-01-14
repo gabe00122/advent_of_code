@@ -43,7 +43,7 @@ pub fn run(input: &str) -> ChallengeResult {
     let input: Vec<Command> = input.lines()
         .enumerate()
         .map(|(i, line)|
-            line.parse::<Command>().map_err(|error| ParseLineError::new(error, i))
+            line.parse::<Command>().map_err(|error| ParseLineError::new(i, error))
         ).collect::<Result<_, _>>()?;
 
     println!("{:?}", &input[..7]);

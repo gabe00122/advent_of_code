@@ -8,7 +8,7 @@ pub struct ParseLineError<T: Error + 'static> {
 }
 
 impl<T: Error> ParseLineError<T> {
-    pub fn new(cause: T, line: usize) -> Self {
+    pub fn new(line: usize, cause: T) -> Self {
         ParseLineError {
             cause,
             line,
@@ -18,7 +18,7 @@ impl<T: Error> ParseLineError<T> {
 
 impl<T : Error> Display for ParseLineError<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Temp")
+        write!(f, "\"{}\" on line {}", self.cause, self.line)
     }
 }
 
