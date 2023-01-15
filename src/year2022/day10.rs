@@ -84,12 +84,29 @@ where
     }
 }
 
-fn part1(commands: &[Command]) -> i32 {
-    Simulation::new(commands).zip(1..)
+fn part1(x_values: &[i32]) -> i32 {
+    x_values.iter().zip(1..)
         .map(|(x, cycle)| x * cycle)
         .skip(19)
         .step_by(40)
         .sum()
+}
+
+fn part2(x_values: &[i32]) {
+    let mut iter = x_values.iter();
+
+    for _ in 0..6 {
+        for col in 0..40 {
+            if let Some(&x) = iter.next() {
+                if col >= x - 1 && col <= x + 1 {
+                    print!("#");
+                } else {
+                    print!(".");
+                }
+            }
+        }
+        println!();
+    }
 }
 
 pub fn run(input: &str) -> ChallengeResult {
@@ -99,7 +116,9 @@ pub fn run(input: &str) -> ChallengeResult {
             line.parse::<Command>().map_err(|error| ParseLineError::new(i, error))
         ).collect::<Result<_, _>>()?;
 
-    let part1_solution = part1(&commands);
+    let x_values: Vec<i32> = Simulation::new(&commands).collect();
 
-    Ok(Solution::from(part1_solution, 0))
+    part2(&x_values);
+
+    Ok(Solution::from(part1(&x_values), 0))
 }
