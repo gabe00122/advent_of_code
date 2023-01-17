@@ -1,4 +1,3 @@
-
 use std::collections::BTreeSet;
 use crate::challenge_result::{ChallengeResult, Solution};
 

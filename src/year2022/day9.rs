@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use hashbrown::HashSet;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 use std::num::ParseIntError;
