@@ -1,6 +1,6 @@
+use crate::challenge_result::{ChallengeResult, Solution};
 use lazy_static::lazy_static;
 use regex::Regex;
-use crate::challenge_result::{ChallengeResult, Solution};
 
 type MonkeyItem = i64;
 
@@ -38,7 +38,12 @@ struct MonkeyTest {
     recipient_false: usize,
 }
 
-fn round(monkeys: &[Monkey], operation: Operation, monkey_items: &mut Vec<Vec<MonkeyItem>>, inspections: &mut [usize]) {
+fn round(
+    monkeys: &[Monkey],
+    operation: Operation,
+    monkey_items: &mut Vec<Vec<MonkeyItem>>,
+    inspections: &mut [usize],
+) {
     for (idx, (monkey, inspection)) in monkeys.iter().zip(inspections.iter_mut()).enumerate() {
         *inspection += monkey_items[idx].len();
 
@@ -56,11 +61,16 @@ fn round(monkeys: &[Monkey], operation: Operation, monkey_items: &mut Vec<Vec<Mo
     }
 }
 
-fn rounds(monkeys: &[Monkey], items: &Vec<Vec<MonkeyItem>>, operation: Operation, iterations: usize) -> usize {
+fn rounds(
+    monkeys: &[Monkey],
+    items: &Vec<Vec<MonkeyItem>>,
+    operation: Operation,
+    num: usize,
+) -> usize {
     let mut items = items.clone();
     let mut inspections: Vec<usize> = monkeys.iter().map(|_| 0).collect();
 
-    for _ in 0..iterations {
+    for _ in 0..num {
         round(&monkeys, operation, &mut items, &mut inspections);
     }
 
@@ -73,7 +83,9 @@ fn rounds(monkeys: &[Monkey], items: &Vec<Vec<MonkeyItem>>, operation: Operation
 pub fn run(input: &str) -> ChallengeResult {
     let (monkeys, items) = parse_monkeys(input);
 
-    let lsm = monkeys.iter().fold(1, |acc, monkey| acc * monkey.test.divisible);
+    let lsm = monkeys
+        .iter()
+        .fold(1, |acc, monkey| acc * monkey.test.divisible);
 
     let part1 = rounds(&monkeys, &items, Operation::Div(3), 20);
     let part2 = rounds(&monkeys, &items, Operation::Mod(lsm), 10000);
@@ -83,40 +95,59 @@ pub fn run(input: &str) -> ChallengeResult {
 
 fn parse_monkeys(s: &str) -> (Vec<Monkey>, Vec<Vec<MonkeyItem>>) {
     lazy_static! {
-            static ref RE: Regex = Regex::new(r"(?x)
+        static ref RE: Regex = Regex::new(
+            r"(?x)
                 Monkey\ \d+:\s+
                     Starting\ items:\ ((?:\d+,\s*)*\d+)\s+
                     Operation:\ new\ =\ old\ ([*+])\ (\d+|old)\s+
                     Test:\ divisible\ by\ (\d+)\s+
                         If\ true:\ throw\ to\ monkey\ (\d+)\s+
                         If\ false:\ throw\ to\ monkey\ (\d+)\s*
-            ").unwrap();
+            "
+        )
+        .unwrap();
     }
 
-    RE.captures_iter(s).map(|cap| {
-        let items: Vec<MonkeyItem> = cap.get(1).unwrap().as_str()
-            .split(", ").map(|v| v.parse::<MonkeyItem>().unwrap())
-            .collect();
+    RE.captures_iter(s)
+        .map(|cap| {
+            let items: Vec<MonkeyItem> = cap
+                .get(1)
+                .unwrap()
+                .as_str()
+                .split(", ")
+                .map(|v| v.parse::<MonkeyItem>().unwrap())
+                .collect();
 
-        let operator_raw = cap.get(2).unwrap().as_str();
-        let operation_source_raw = cap.get(3).unwrap().as_str();
+            let operator_raw = cap.get(2).unwrap().as_str();
+            let operation_source_raw = cap.get(3).unwrap().as_str();
 
-        let operation = if operation_source_raw == "old" {
-            Operation::Square
-        } else {
-            let operation_source = operation_source_raw.parse::<MonkeyItem>().unwrap();
-
-            if operator_raw == "*" {
-                Operation::Mul(operation_source)
+            let operation = if operation_source_raw == "old" {
+                Operation::Square
             } else {
-                Operation::Add(operation_source)
-            }
-        };
+                let operation_source = operation_source_raw.parse::<MonkeyItem>().unwrap();
 
-        let divisible: MonkeyItem = cap.get(4).unwrap().as_str().parse().unwrap();
-        let recipient_true: usize = cap.get(5).unwrap().as_str().parse().unwrap();
-        let recipient_false: usize = cap.get(6).unwrap().as_str().parse().unwrap();
+                if operator_raw == "*" {
+                    Operation::Mul(operation_source)
+                } else {
+                    Operation::Add(operation_source)
+                }
+            };
 
-        (Monkey { operation, test: MonkeyTest { divisible, recipient_true, recipient_false } }, items)
-    }).unzip()
+            let divisible: MonkeyItem = cap.get(4).unwrap().as_str().parse().unwrap();
+            let recipient_true: usize = cap.get(5).unwrap().as_str().parse().unwrap();
+            let recipient_false: usize = cap.get(6).unwrap().as_str().parse().unwrap();
+
+            (
+                Monkey {
+                    operation,
+                    test: MonkeyTest {
+                        divisible,
+                        recipient_true,
+                        recipient_false,
+                    },
+                },
+                items,
+            )
+        })
+        .unzip()
 }
