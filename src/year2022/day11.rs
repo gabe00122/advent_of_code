@@ -23,10 +23,8 @@ impl Operation {
 
 #[derive(Debug, Clone)]
 struct Monkey {
-    items: Vec<MonkeyItem>,
     operation: Operation,
     test: MonkeyTest,
-    inspections: usize,
 }
 
 #[derive(Debug, Clone)]
@@ -36,49 +34,49 @@ struct MonkeyTest {
     recipient_false: usize,
 }
 
-fn round(monkeys: &mut [Monkey]) {
-    for idx in 0..monkeys.len() {
-        monkeys[idx].inspections += monkeys[idx].items.len();
-        let items: Vec<MonkeyItem> = monkeys[idx].items.drain(..).collect();
-        let operation = monkeys[idx].operation;
-        let test = monkeys[idx].test.clone();
+fn round(monkeys: &[Monkey], monkey_items: &mut Vec<Vec<MonkeyItem>>, inspections: &mut [usize]) {
+    for (idx, (monkey, inspection)) in monkeys.iter()
+        .zip(inspections.iter_mut()).enumerate() {
 
-        for item in items {
-            let next_item = operation.apply(item) / 3;
+        *inspection += monkey_items[idx].len();
 
-            let recipient_idx = if next_item % test.divisible == 0 {
-                test.recipient_true
+        while let Some(item) = monkey_items[idx].pop() {
+            let next_item = monkey.operation.apply(item) / 3;
+
+            let recipient_idx = if next_item % monkey.test.divisible == 0 {
+                monkey.test.recipient_true
             } else {
-                test.recipient_false
+                monkey.test.recipient_false
             };
 
-            monkeys[recipient_idx].items.push(next_item);
+            monkey_items[recipient_idx].push(next_item);
         }
     }
 }
 
-fn print_items(monkeys: &[Monkey]) {
-    for (idx, monkey) in monkeys.iter().enumerate() {
-        println!("Monkey {}: {:?}", idx, monkey.items);
+fn print_items(monkey_items: &Vec<Vec<MonkeyItem>>) {
+    for (idx, items) in monkey_items.iter().enumerate() {
+        println!("Monkey {}: {:?}", idx, items);
     }
 }
 
 pub fn run(input: &str) -> ChallengeResult {
-    let mut monkeys = parse_monkeys(input);
+    let (monkeys, mut items) = parse_monkeys(input);
+    let mut inspections: Vec<usize> = monkeys.iter().map(|_| 0).collect();
 
     for _ in 0..20 {
-        round(&mut monkeys);
+        round(&monkeys, &mut items, &mut inspections);
     }
 
-    monkeys.sort_unstable_by_key(|monkey| monkey.inspections);
-    monkeys.reverse();
+    inspections.sort_unstable();
+    inspections.reverse();
 
-    let part1 = monkeys[0].inspections * monkeys[1].inspections;
+    let part1 = inspections[0] * inspections[1];
 
     Ok(Solution::from(part1, 0))
 }
 
-fn parse_monkeys(s: &str) -> Vec<Monkey> {
+fn parse_monkeys(s: &str) -> (Vec<Monkey>, Vec<Vec<MonkeyItem>>) {
     lazy_static! {
             static ref RE: Regex = Regex::new(r"(?x)
                 Monkey\ \d+:\s+
@@ -114,6 +112,6 @@ fn parse_monkeys(s: &str) -> Vec<Monkey> {
         let recipient_true: usize = cap.get(5).unwrap().as_str().parse().unwrap();
         let recipient_false: usize = cap.get(6).unwrap().as_str().parse().unwrap();
 
-        Monkey { items, operation, test: MonkeyTest { divisible, recipient_true, recipient_false }, inspections: 0 }
-    }).collect()
+        (Monkey { operation, test: MonkeyTest { divisible, recipient_true, recipient_false } }, items)
+    }).unzip()
 }
