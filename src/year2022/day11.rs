@@ -75,9 +75,7 @@ fn rounds(
     }
 
     inspections.sort_unstable();
-    inspections.reverse();
-
-    inspections[0] * inspections[1]
+    inspections.iter().rev().take(2).product()
 }
 
 pub fn run(input: &str) -> ChallengeResult {
