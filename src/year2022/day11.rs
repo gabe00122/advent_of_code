@@ -85,12 +85,38 @@ pub fn run(input: &str) -> ChallengeResult {
 
     let lsm = monkeys
         .iter()
-        .fold(1, |acc, monkey| acc * monkey.test.divisible);
+        .map(|monkey| monkey.test.divisible)
+        .reduce(lcm)
+        .unwrap();
 
     let part1 = rounds(&monkeys, &items, Operation::Div(3), 20);
     let part2 = rounds(&monkeys, &items, Operation::Mod(lsm), 10000);
 
     Ok(Solution::from(part1, part2))
+}
+
+fn lcm(first: MonkeyItem, second: MonkeyItem) -> MonkeyItem {
+    first * second / gcd(first, second)
+}
+
+fn gcd(first: MonkeyItem, second: MonkeyItem) -> MonkeyItem {
+    let mut max = first;
+    let mut min = second;
+    if min > max {
+        let val = max;
+        max = min;
+        min = val;
+    }
+
+    loop {
+        let res = max % min;
+        if res == 0 {
+            return min;
+        }
+
+        max = min;
+        min = res;
+    }
 }
 
 fn parse_monkeys(s: &str) -> (Vec<Monkey>, Vec<Vec<MonkeyItem>>) {
