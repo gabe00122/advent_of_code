@@ -2,20 +2,24 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use crate::challenge_result::{ChallengeResult, Solution};
 
-type MonkeyItem = i32;
+type MonkeyItem = i64;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 enum Operation {
     Mul(MonkeyItem),
     Add(MonkeyItem),
+    Div(MonkeyItem),
+    Mod(MonkeyItem),
     Square,
 }
 
 impl Operation {
     fn apply(&self, value: MonkeyItem) -> MonkeyItem {
         match self {
-            Operation::Mul(x) => x * value,
-            Operation::Add(x) => x + value,
+            Operation::Mul(x) => value * x,
+            Operation::Add(x) => value + x,
+            Operation::Div(x) => value / x,
+            Operation::Mod(x) => value % x,
             Operation::Square => value * value,
         }
     }
@@ -34,14 +38,12 @@ struct MonkeyTest {
     recipient_false: usize,
 }
 
-fn round(monkeys: &[Monkey], monkey_items: &mut Vec<Vec<MonkeyItem>>, inspections: &mut [usize]) {
-    for (idx, (monkey, inspection)) in monkeys.iter()
-        .zip(inspections.iter_mut()).enumerate() {
-
+fn round(monkeys: &[Monkey], operation: Operation, monkey_items: &mut Vec<Vec<MonkeyItem>>, inspections: &mut [usize]) {
+    for (idx, (monkey, inspection)) in monkeys.iter().zip(inspections.iter_mut()).enumerate() {
         *inspection += monkey_items[idx].len();
 
         while let Some(item) = monkey_items[idx].pop() {
-            let next_item = monkey.operation.apply(item) / 3;
+            let next_item = operation.apply(monkey.operation.apply(item));
 
             let recipient_idx = if next_item % monkey.test.divisible == 0 {
                 monkey.test.recipient_true
@@ -54,26 +56,29 @@ fn round(monkeys: &[Monkey], monkey_items: &mut Vec<Vec<MonkeyItem>>, inspection
     }
 }
 
-fn print_items(monkey_items: &Vec<Vec<MonkeyItem>>) {
-    for (idx, items) in monkey_items.iter().enumerate() {
-        println!("Monkey {}: {:?}", idx, items);
-    }
-}
-
-pub fn run(input: &str) -> ChallengeResult {
-    let (monkeys, mut items) = parse_monkeys(input);
+fn rounds(monkeys: &[Monkey], items: &Vec<Vec<MonkeyItem>>, operation: Operation, iterations: usize) -> usize {
+    let mut items = items.clone();
     let mut inspections: Vec<usize> = monkeys.iter().map(|_| 0).collect();
 
-    for _ in 0..20 {
-        round(&monkeys, &mut items, &mut inspections);
+    for _ in 0..iterations {
+        round(&monkeys, operation, &mut items, &mut inspections);
     }
 
     inspections.sort_unstable();
     inspections.reverse();
 
-    let part1 = inspections[0] * inspections[1];
+    inspections[0] * inspections[1]
+}
 
-    Ok(Solution::from(part1, 0))
+pub fn run(input: &str) -> ChallengeResult {
+    let (monkeys, items) = parse_monkeys(input);
+
+    let lsm = monkeys.iter().fold(1, |acc, monkey| acc * monkey.test.divisible);
+
+    let part1 = rounds(&monkeys, &items, Operation::Div(3), 20);
+    let part2 = rounds(&monkeys, &items, Operation::Mod(lsm), 10000);
+
+    Ok(Solution::from(part1, part2))
 }
 
 fn parse_monkeys(s: &str) -> (Vec<Monkey>, Vec<Vec<MonkeyItem>>) {
