@@ -83,14 +83,14 @@ fn rounds(
 pub fn run(input: &str) -> ChallengeResult {
     let (monkeys, items) = parse_monkeys(input);
 
-    let lsm = monkeys
+    let least_common_multiple = monkeys
         .iter()
         .map(|monkey| monkey.test.divisible)
         .reduce(lcm)
         .unwrap();
 
     let part1 = rounds(&monkeys, &items, Operation::Div(3), 20);
-    let part2 = rounds(&monkeys, &items, Operation::Mod(lsm), 10000);
+    let part2 = rounds(&monkeys, &items, Operation::Mod(least_common_multiple), 10000);
 
     Ok(Solution::from(part1, part2))
 }
