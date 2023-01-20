@@ -2,7 +2,7 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use crate::challenge_result::{ChallengeResult, Solution};
 
-type MonkeyItem = i64;
+type MonkeyItem = i32;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 enum Operation {
