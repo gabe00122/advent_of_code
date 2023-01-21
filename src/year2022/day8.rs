@@ -114,8 +114,6 @@ where
 }
 
 pub fn run(input: &str) -> ChallengeResult {
-    //Time: 600µs
-
     let trees: Grid<i32> = input.parse()?;
 
     //part1

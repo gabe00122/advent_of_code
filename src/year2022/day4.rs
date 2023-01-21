@@ -39,5 +39,5 @@ pub fn run(input: &str) -> ChallengeResult {
         first.overlaps(*second)
     }).count();
 
-    Ok(Solution::from(part1 as u64, part2 as u64))
+    Ok(Solution::from(part1, part2))
 }
