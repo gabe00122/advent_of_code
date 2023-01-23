@@ -1,4 +1,5 @@
 use crate::challenge_result::{ChallengeResult, Solution};
+use crate::year2022::math;
 use lazy_static::lazy_static;
 use regex::Regex;
 
@@ -84,37 +85,13 @@ pub fn run(input: &str) -> ChallengeResult {
     let least_common_multiple = monkeys
         .iter()
         .map(|monkey| monkey.test.divisible)
-        .reduce(lcm)
+        .reduce(math::lcm)
         .unwrap();
 
     let part1 = rounds(&monkeys, &items, Operation::Div(3), 20);
     let part2 = rounds(&monkeys, &items, Operation::Mod(least_common_multiple), 10000);
 
     Ok(Solution::from(part1, part2))
-}
-
-fn lcm(first: MonkeyItem, second: MonkeyItem) -> MonkeyItem {
-    first * second / gcd(first, second)
-}
-
-fn gcd(first: MonkeyItem, second: MonkeyItem) -> MonkeyItem {
-    let mut max = first;
-    let mut min = second;
-    if min > max {
-        let val = max;
-        max = min;
-        min = val;
-    }
-
-    loop {
-        let res = max % min;
-        if res == 0 {
-            return min;
-        }
-
-        max = min;
-        min = res;
-    }
 }
 
 fn parse_monkeys(s: &str) -> (Vec<Monkey>, Vec<Vec<MonkeyItem>>) {
