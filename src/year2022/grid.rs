@@ -131,7 +131,7 @@ impl Error for ParseGridError {}
 
 impl<T> FromStr for Grid<T>
 where
-    T: FromStr,
+    T: FromChar,
 {
     type Err = ParseGridError;
 
@@ -140,13 +140,9 @@ where
         let mut width = 0;
         let mut data: Vec<T> = Vec::new();
 
-        let mut current = s;
-        while !current.is_empty() {
-            let (left, right) = current.split_at(1);
-            current = right;
-
-            if left != "\n" {
-                let value: T = left.parse().map_err(|_| ParseGridError)?;
+        for c in s.chars() {
+            if c != '\n' {
+                let value = T::from_char(c).map_err(|_| ParseGridError)?;
                 data.push(value);
 
                 if !found_width {
@@ -163,4 +159,10 @@ where
             data,
         })
     }
+}
+
+pub trait FromChar: Sized {
+    type Error;
+
+    fn from_char(c: char) -> Result<Self, Self::Error>;
 }

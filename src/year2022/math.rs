@@ -1,8 +1,16 @@
-pub fn lcm(first: MonkeyItem, second: MonkeyItem) -> MonkeyItem {
+use num::{PrimInt};
+
+pub fn lcm<T>(first: T, second: T) -> T
+where
+    T: PrimInt,
+{
     first * second / gcd(first, second)
 }
 
-pub fn gcd(first: MonkeyItem, second: MonkeyItem) -> MonkeyItem {
+pub fn gcd<T>(first: T, second: T) -> T
+where
+    T: PrimInt,
+{
     let mut max = first;
     let mut min = second;
     if min > max {
@@ -13,7 +21,7 @@ pub fn gcd(first: MonkeyItem, second: MonkeyItem) -> MonkeyItem {
 
     loop {
         let res = max % min;
-        if res == 0 {
+        if res.is_zero() {
             return min;
         }
 

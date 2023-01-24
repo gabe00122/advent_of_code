@@ -1,5 +1,5 @@
 use crate::challenge_result::{ChallengeResult, Solution};
-use crate::year2022::grid::Grid;
+use crate::year2022::grid::{FromChar, Grid};
 
 fn visibility(trees: &Grid<i32>) -> Grid<bool> {
     let mut visibility = Grid::new(trees.width, trees.height, || false);
@@ -111,6 +111,14 @@ where
     }
 
     heights.clear();
+}
+
+impl FromChar for i32 {
+    type Error = ();
+
+    fn from_char(value: char) -> Result<Self, Self::Error> {
+        value.to_digit(10).map(|x| x as i32).ok_or(())
+    }
 }
 
 pub fn run(input: &str) -> ChallengeResult {
